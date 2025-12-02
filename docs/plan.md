@@ -6,12 +6,12 @@ https://web-final-lemon.vercel.app/
 ## 1. 本次 Prototype 已完成
 - 基本頁面架構
 - 四個示意頁面
-- 資料庫串接 (MongoDB)
+- 串接 OAuth 登入
 - 設計 LOGO
 - 基本功能 placeholder
 
 ## 2. 最終版本預計完成項目
-- 串接 OAuth 登入
+- 資料庫串接 (MongoDB)
 - 三大主要功能：
     - 考古題上傳
     - 考古題搜尋、分類
