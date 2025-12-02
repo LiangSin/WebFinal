@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import logo from "../../assets/webFinal-logo.png";
-import { AuthProvider } from "@/components/AuthProvider";
-import { AuthButton } from "@/components/AuthButton";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+import { AuthButton } from "@/components/auth/AuthButton";
+import { NavBar } from "@/components/NavBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Open Book（Prototype）",
+  title: "Open Book",
   description: "Open Book – NTU Exam Archive Sharing Platform (Prototype UI only)",
 };
 
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="zh-Hant">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 text-slate-900`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-slate-50 text-slate-900`}
       >
         <AuthProvider>
           <div className="min-h-screen">
@@ -39,7 +40,7 @@ export default function RootLayout({
                 <Link href="/" className="flex items-center gap-4">
                   <Image
                     src={logo}
-                    alt="Open Book 標誌"
+                    alt="Open Book Logo"
                     className="h-20 w-20 object-contain"
                     priority
                   />
@@ -48,36 +49,11 @@ export default function RootLayout({
                       Open Book
                     </span>
                     <span className="text-sm text-slate-500">
-                      台大考古題分享平台 Prototype · 介面預覽
+                      台大考古題分享平台 - Prototype
                     </span>
                   </div>
                 </Link>
-                <nav className="flex items-center gap-7 text-base">
-                  <Link
-                    href="/"
-                    className="font-medium text-slate-700 hover:text-[#498E7B]"
-                  >
-                    Trending⚡️
-                  </Link>
-                  <Link
-                    href="/search"
-                    className="font-medium text-slate-700 hover:text-[#498E7B]"
-                  >
-                    搜尋
-                  </Link>
-                  <Link
-                    href="/upload"
-                    className="font-medium text-slate-700 hover:text-[#498E7B]"
-                  >
-                    上傳考古題
-                  </Link>
-                  <Link
-                    href="/user"
-                    className="font-medium text-slate-700 hover:text-[#498E7B]"
-                  >
-                    我的頁面
-                  </Link>
-                </nav>
+                <NavBar />
                 <div className="flex items-center gap-3">
                   <AuthButton />
                 </div>

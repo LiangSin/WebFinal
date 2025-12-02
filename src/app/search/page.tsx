@@ -13,7 +13,7 @@ export default function SearchPage() {
               關鍵字
             </label>
             <input
-              className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-[#498E7B]"
+              className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-theme-color"
               placeholder="輸入課程名稱或教授名"
             />
             <div className="mt-2 flex gap-2 text-[11px] text-slate-500">
@@ -34,12 +34,12 @@ export default function SearchPage() {
             </label>
             <div className="mt-1 flex items-center gap-2">
               <input
-                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-[#498E7B]"
+                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-theme-color"
                 placeholder="111"
               />
               <span className="text-[11px] text-slate-500">到</span>
               <input
-                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-[#498E7B]"
+                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-theme-color"
                 placeholder="113"
               />
             </div>
@@ -53,7 +53,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -70,7 +70,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -87,7 +87,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -98,7 +98,7 @@ export default function SearchPage() {
 
           <button
             type="button"
-            className="mt-2 w-full rounded-md bg-[#498E7B] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#3a7263]"
+            className="mt-2 w-full rounded-md bg-theme-color px-3 py-1.5 text-xs font-medium text-white hover:bg-[#3a7263]"
           >
             搜尋（目前僅更新下方假資料）
           </button>
@@ -182,7 +182,7 @@ export default function SearchPage() {
                 </span>
                 <button
                   type="button"
-                  className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                 >
                   查看詳細
                 </button>
