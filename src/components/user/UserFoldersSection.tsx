@@ -34,7 +34,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
         </div>
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="rounded-md bg-[#498E7B] px-3 py-1.5 text-[11px] font-medium text-white hover:bg-[#3d7a69]"
+          className="rounded-md bg-theme-color px-3 py-1.5 text-[11px] font-medium text-white hover:bg-[#3d7a69]"
         >
           + 新增資料夾
         </button>
@@ -45,7 +45,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
           <p className="text-xs text-slate-500">目前沒有資料夾</p>
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="mt-2 text-[11px] text-[#498E7B] hover:underline"
+            className="mt-2 text-[11px] text-theme-color hover:underline"
           >
             建立第一個資料夾
           </button>
@@ -55,7 +55,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
           {initialFolders.map((folder) => (
             <div
               key={folder._id}
-              className="flex cursor-pointer flex-col justify-between rounded-lg border border-slate-100 bg-slate-50/80 p-3 transition-colors hover:border-[#498E7B]/30 hover:bg-white"
+              className="flex cursor-pointer flex-col justify-between rounded-lg border border-slate-100 bg-slate-50/80 p-3 transition-colors hover:border-theme-color/30 hover:bg-white"
               onClick={() => setSelectedFolder(folder)}
             >
               <div>

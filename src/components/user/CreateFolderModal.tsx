@@ -71,7 +71,7 @@ export function CreateFolderModal({ isOpen, onClose }: CreateFolderModalProps) {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#498E7B] focus:outline-none focus:ring-1 focus:ring-[#498E7B]"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-theme-color focus:outline-none focus:ring-1 focus:ring-theme-color"
               placeholder="例如：期中考衝刺"
             />
           </div>
@@ -84,7 +84,7 @@ export function CreateFolderModal({ isOpen, onClose }: CreateFolderModalProps) {
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#498E7B] focus:outline-none focus:ring-1 focus:ring-[#498E7B]"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-theme-color focus:outline-none focus:ring-1 focus:ring-theme-color"
               placeholder="關於這個資料夾的說明..."
             />
           </div>
@@ -99,7 +99,7 @@ export function CreateFolderModal({ isOpen, onClose }: CreateFolderModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-md bg-[#498E7B] px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#3d7a69] focus:outline-none focus:ring-2 focus:ring-[#498E7B] focus:ring-offset-2 disabled:opacity-50"
+              className="rounded-md bg-theme-color px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#3d7a69] focus:outline-none focus:ring-2 focus:ring-theme-color focus:ring-offset-2 disabled:opacity-50"
             >
               {isSubmitting ? "建立中..." : "建立"}
             </button>

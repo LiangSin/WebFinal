@@ -119,7 +119,7 @@ export function FolderDetailModal({ isOpen, onClose, folder }: FolderDetailModal
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#498E7B] focus:outline-none focus:ring-1 focus:ring-[#498E7B]"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-theme-color focus:outline-none focus:ring-1 focus:ring-theme-color"
               />
             </div>
             <div>
@@ -131,7 +131,7 @@ export function FolderDetailModal({ isOpen, onClose, folder }: FolderDetailModal
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#498E7B] focus:outline-none focus:ring-1 focus:ring-[#498E7B]"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-theme-color focus:outline-none focus:ring-1 focus:ring-theme-color"
               />
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -149,7 +149,7 @@ export function FolderDetailModal({ isOpen, onClose, folder }: FolderDetailModal
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-md bg-[#498E7B] px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#3d7a69]"
+                className="rounded-md bg-theme-color px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#3d7a69]"
               >
                 儲存
               </button>

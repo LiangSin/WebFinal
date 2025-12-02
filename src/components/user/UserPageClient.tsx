@@ -35,7 +35,7 @@ export default function UserPage({ initialFolders = [] }: UserPageProps) {
                 onClick={() => setActiveTab(tab)}
                 className={`border-b-2 px-1 pb-2 text-xs ${
                   isActive
-                    ? "border-[#498E7B] font-medium text-[#498E7B]"
+                    ? "border-theme-color font-medium text-theme-color"
                     : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
@@ -88,7 +88,7 @@ export default function UserPage({ initialFolders = [] }: UserPageProps) {
                   <div className="flex items-center gap-2 text-[11px]">
                     <button
                       type="button"
-                      className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                      className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                     >
                       編輯
                     </button>
@@ -132,7 +132,7 @@ export default function UserPage({ initialFolders = [] }: UserPageProps) {
                   </div>
                   <button
                     type="button"
-                    className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-[#498E7B] hover:text-[#498E7B]"
+                    className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     前往考古題
                   </button>

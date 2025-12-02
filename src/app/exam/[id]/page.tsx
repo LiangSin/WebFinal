@@ -31,13 +31,13 @@ export default function ExamDetailPage({ params }: ExamDetailPageProps) {
             <div className="flex gap-2">
               <button
                 type="button"
-                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-[#498E7B] hover:text-[#498E7B]"
+                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
               >
                 收藏 / 加入資料夾
               </button>
               <button
                 type="button"
-                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-[#498E7B] hover:text-[#498E7B]"
+                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
               >
                 之後可以在這裡按閃電
               </button>
@@ -67,7 +67,7 @@ export default function ExamDetailPage({ params }: ExamDetailPageProps) {
                     <span className="truncate">{file}</span>
                     <button
                       type="button"
-                      className="text-[11px] text-[#498E7B] hover:underline"
+                      className="text-[11px] text-theme-color hover:underline"
                     >
                       下載
                     </button>

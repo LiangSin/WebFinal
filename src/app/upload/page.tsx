@@ -61,7 +61,7 @@ export default function UploadPage() {
   };
 
   const baseInputClass =
-    "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-[#498E7B]";
+    "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-theme-color";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -280,13 +280,13 @@ export default function UploadPage() {
                 <button
                   type="button"
                   id={group.id}
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-[#498E7B] hover:text-[#498E7B]"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
                 >
                   選擇本機檔案
                 </button>
                 <button
                   type="button"
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-[#498E7B] hover:text-[#498E7B]"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
                 >
                   從 Google Drive 選擇
                 </button>
@@ -300,7 +300,7 @@ export default function UploadPage() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full rounded-md bg-[#498E7B] px-3 py-2 text-xs font-medium text-white hover:bg-[#3a7263]"
+              className="w-full rounded-md bg-theme-color px-3 py-2 text-xs font-medium text-white hover:bg-[#3a7263]"
             >
               建立考古題（目前僅驗證必填欄位）
             </button>

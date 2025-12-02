@@ -28,7 +28,7 @@ export default function Home() {
           {/* 在後續步驟會改成共用元件與 mock data map */}
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-[#498E7B]/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
                 資工系 · 必修
               </span>
               <span className="flex items-center gap-1 text-[11px] text-slate-500">
@@ -48,7 +48,7 @@ export default function Home() {
 
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-[#498E7B]/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
                 電機系 · 選修
               </span>
               <span className="flex items-center gap-1 text-[11px] text-slate-500">
@@ -68,7 +68,7 @@ export default function Home() {
 
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-[#498E7B]/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
                 通識 · 社科
               </span>
               <span className="flex items-center gap-1 text-[11px] text-slate-500">

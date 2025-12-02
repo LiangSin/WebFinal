@@ -49,7 +49,7 @@ export function AuthButton() {
     return (
       <button
         type="button"
-        className="rounded-full border border-slate-300 px-4 py-1.5 text-xs text-slate-700 hover:border-[#498E7B] hover:text-[#498E7B]"
+        className="rounded-full border border-slate-300 px-4 py-1.5 text-xs text-slate-700 hover:border-theme-color hover:text-theme-color"
         onClick={() => signIn("google")}
       >
         使用 g.ntu.edu.tw 登入
