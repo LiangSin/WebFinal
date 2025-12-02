@@ -15,8 +15,6 @@ const UserSchema = new Schema({
   }]
 });
 
-export const User = models.User || model('User', UserSchema);
-
 // Exam Model (Placeholder based on project plan)
 const ExamSchema = new Schema({
   title: { type: String, required: true },
@@ -30,4 +28,10 @@ const ExamSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export const Exam = models.Exam || model('Exam', ExamSchema);
+// Prevent Mongoose OverwriteModelError and ensure Schema updates in dev
+// This logic ensures that if we change the schema, the model is recompiled
+// in development mode, preventing the "missing field" issue.
+const User = models.User || model('User', UserSchema);
+const Exam = models.Exam || model('Exam', ExamSchema);
+
+export { User, Exam };

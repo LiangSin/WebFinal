@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Open Book（Prototype）",
+  title: "Open Book",
   description: "Open Book – NTU Exam Archive Sharing Platform (Prototype UI only)",
 };
 
@@ -39,7 +39,7 @@ export default function RootLayout({
                 <Link href="/" className="flex items-center gap-4">
                   <Image
                     src={logo}
-                    alt="Open Book 標誌"
+                    alt="Open Book Logo"
                     className="h-20 w-20 object-contain"
                     priority
                   />
@@ -48,7 +48,7 @@ export default function RootLayout({
                       Open Book
                     </span>
                     <span className="text-sm text-slate-500">
-                      台大考古題分享平台 Prototype · 介面預覽
+                      台大考古題分享平台 - Prototype
                     </span>
                   </div>
                 </Link>
