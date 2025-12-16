@@ -38,13 +38,21 @@ export async function getUserFolders() {
   if (!userId) return [];
 
   try {
-    const user = await User.findById(userId).lean();
+    const user = await User.findById(userId).populate({
+      path: 'folders.exams',
+      model: Exam,
+      select: 'title _id'
+    }).lean();
+
     // Transform to simple object and ensure _id is string
     return (user?.folders || []).map((folder: any) => ({
       _id: folder._id.toString(),
       name: folder.name,
       description: folder.description || '',
-      exams: (folder.exams || []).map((id: any) => id.toString())
+      exams: (folder.exams || []).map((exam: any) => ({
+        _id: exam._id.toString(),
+        title: exam.title || '未知標題'
+      }))
     }));
   } catch (error) {
     console.error("Error fetching folders:", error);
@@ -57,9 +65,6 @@ export async function getUserUploadedExams() {
   if (!userId) return [];
 
   try {
-    // Ensure Exam model is registered by importing it (already done at top)
-    // We populate uploadedExams. 
-    // Note: If using lean(), populated fields are POJOs.
     const user = await User.findById(userId).populate({
       path: 'uploadedExams',
       model: Exam,
@@ -86,7 +91,7 @@ export async function getUserUploadedExams() {
         url: f.url,
         name: f.name,
         fileId: f.fileId,
-        _id: f._id ? f._id.toString() : undefined // Ensure subdocument ID is string or undefined
+        _id: f._id ? f._id.toString() : undefined
       })),
     }));
   } catch (error) {
@@ -104,17 +109,29 @@ export async function createFolder(name: string, description: string) {
   }
 
   try {
-    await User.findByIdAndUpdate(userId, {
-      $push: {
-        folders: {
-          name,
-          description,
-          exams: []
-        }
-      }
-    });
+    const newFolder = {
+      name,
+      description,
+      exams: []
+    };
+
+    const user = await User.findByIdAndUpdate(
+      userId, 
+      { $push: { folders: newFolder } },
+      { new: true } // Return the updated document
+    ).lean();
     
     revalidatePath('/user');
+
+    // Return the newly created folder (last one in the array)
+    if (user && user.folders && user.folders.length > 0) {
+      const createdFolder = user.folders[user.folders.length - 1];
+      return {
+        _id: createdFolder._id.toString(),
+        name: createdFolder.name
+      };
+    }
+    return null;
   } catch (error) {
     console.error("Database error creating folder:", error);
     throw new Error('Database error');
@@ -228,6 +245,68 @@ export async function deleteExam(examId: string) {
       }
     }
   );
+
+  revalidatePath('/user');
+}
+
+export async function getUserSavedExams() {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  try {
+    const user = await User.findById(userId).populate({
+      path: 'savedExams',
+      model: Exam,
+      options: { sort: { createdAt: -1 } }
+    }).lean();
+
+    if (!user || !user.savedExams) {
+      return [];
+    }
+
+    return (user.savedExams as any[]).map((exam: any) => {
+      // Find which folders this exam is in
+      const savedInFolders = (user.folders || [])
+        .filter((folder: any) => folder.exams.some((id: any) => id.toString() === exam._id.toString()))
+        .map((folder: any) => folder._id.toString());
+
+      return {
+        _id: exam._id.toString(),
+        title: exam.title,
+        courseName: exam.courseName,
+        instructor: exam.instructor,
+        semester: exam.semester,
+        examType: exam.examType,
+        hasAnswers: exam.hasAnswers,
+        description: exam.description,
+        lightning: exam.lightning || 0,
+        createdAt: exam.createdAt ? exam.createdAt.toISOString() : null,
+        files: (exam.files || []).map((f: any) => ({
+          type: f.type,
+          url: f.url,
+          name: f.name,
+          fileId: f.fileId,
+          _id: f._id ? f._id.toString() : undefined
+        })),
+        savedInFolders
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching saved exams:", error);
+    return [];
+  }
+}
+
+export async function removeExamFromCollection(examId: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error('Not authenticated');
+
+  await User.findByIdAndUpdate(userId, {
+    $pull: {
+      savedExams: examId,
+      "folders.$[].exams": examId
+    }
+  });
 
   revalidatePath('/user');
 }
