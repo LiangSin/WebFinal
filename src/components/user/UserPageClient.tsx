@@ -1,24 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { UserFoldersSection } from "@/components/user/UserFoldersSection";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Folder, FolderPlus, X } from "lucide-react";
 import { EditExamModal } from "./EditExamModal";
-import { deleteExam } from "@/app/user/actions";
+import { deleteExam, removeExamFromCollection, updateFolder, createFolder } from "@/app/user/actions"; 
+import { updateExamFolders } from "@/app/exam/actions"; 
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation"; // Added useSearchParams
 
 const tabs = ["我上傳的考古題", "我收藏的考古題", "私人資料夾"] as const;
 
 type Tab = (typeof tabs)[number];
 
 interface UserPageProps {
-  initialFolders?: any[]; // passed from Server Component wrapper
+  initialFolders?: any[];
   uploadedExams?: any[];
+  savedExams?: any[];
 }
 
-export default function UserPage({ initialFolders = [], uploadedExams = [] }: UserPageProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("我上傳的考古題");
+export default function UserPage({ initialFolders = [], uploadedExams = [], savedExams = [] }: UserPageProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Initialize activeTab from URL or default
+  const tabParam = searchParams.get("tab");
+  const initialTab: Tab = (tabs.includes(tabParam as any) ? tabParam : "我上傳的考古題") as Tab;
+  
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [editingExam, setEditingExam] = useState<any | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // State for saved exams folder management
+  // Update URL when tab changes
+  useEffect(() => {
+    // Only update if the URL tab param is different from activeTab state to avoid loop
+    const currentTabParam = searchParams.get("tab");
+    if (currentTabParam !== activeTab) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("tab", activeTab);
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [activeTab, router, searchParams]);
+
+  const [activePopoverId, setActivePopoverId] = useState<string | null>(null);
+  const [folders, setFolders] = useState(initialFolders);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "未知時間";
@@ -41,6 +70,87 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
         setIsDeleting(false);
       }
     }
+  };
+
+  const handleRemoveCollection = async (examId: string, title: string) => {
+    // No confirmation needed per prompt? "Delete button becomes remove collection... no need to popup warning"
+    // Prompt: "刪除按鈕會變成移除收藏和資料夾的儲存，而不是刪除整個考古題條目，也就不用跳視窗警告了。"
+    // So just do it.
+    try {
+      await removeExamFromCollection(examId);
+    } catch (error) {
+      console.error("Failed to remove collection:", error);
+      alert("移除失敗");
+    }
+  };
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setActivePopoverId(null);
+        setIsCreatingFolder(false);
+      }
+    }
+    if (activePopoverId) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activePopoverId]);
+
+  const handleFolderCheck = async (examId: string, folderId: string, currentFolders: string[], checked: boolean) => {
+    let newSavedInFolders;
+    if (checked) {
+      newSavedInFolders = [...currentFolders, folderId];
+    } else {
+      newSavedInFolders = currentFolders.filter(id => id !== folderId);
+    }
+    
+    // We update the local state optimistically?
+    // The parent component (UserPage) passes savedExams. We can't mutate props.
+    // We should rely on router.refresh() (which server actions do automatically via revalidatePath)
+    // But to make it feel responsive, we might want to wait.
+    
+    try {
+      await updateExamFolders(examId, newSavedInFolders);
+      // Revalidation happens on server, page should update.
+    } catch (error) {
+      console.error("Error updating exam folders:", error);
+      alert("更新失敗");
+    }
+  };
+
+  const handleCreateFolder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newFolderName.trim()) return;
+
+    try {
+      await createFolder(newFolderName, "");
+      setNewFolderName("");
+      setIsCreatingFolder(false);
+      // Wait for revalidation?
+      // Since we are in client component, we might need a hard reload or wait for next render if server action revalidates.
+      // folders state should be updated if the parent re-renders with new props.
+      // But we are using initialFolders prop as initial state for 'folders'.
+      // Wait, 'initialFolders' comes from server. If server revalidates, the page re-renders, and 'UserPage' gets new 'initialFolders'.
+      // But 'useState(initialFolders)' only initializes once.
+      // We should use 'initialFolders' directly or sync it.
+    } catch (error) {
+      console.error("Error creating folder:", error);
+    }
+  };
+  
+  // Sync folders state with props
+  useEffect(() => {
+    setFolders(initialFolders);
+  }, [initialFolders]);
+
+  const handleItemClick = (e: React.MouseEvent, examId: string) => {
+    // Prevent navigation if clicking buttons
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('input')) {
+      return;
+    }
+    router.push(`/exam/${examId}`);
   };
 
   return (
@@ -101,7 +211,8 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
                 uploadedExams.map((item) => (
                   <article
                     key={item._id}
-                    className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2"
+                    onClick={(e) => handleItemClick(e, item._id)}
+                    className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2 hover:bg-slate-100 transition-colors"
                   >
                     <div>
                       <h3 className="text-[0.9rem] font-semibold text-slate-900">
@@ -117,7 +228,10 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
                         type="button"
                         aria-label="編輯"
                         title="編輯"
-                        onClick={() => setEditingExam(item)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingExam(item);
+                        }}
                         className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
                       >
                         <Pencil className="h-4 w-4" />
@@ -127,7 +241,10 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
                         aria-label="刪除"
                         title="刪除"
                         disabled={isDeleting}
-                        onClick={() => handleDelete(item._id, item.title)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(item._id, item.title);
+                        }}
                         className="rounded-md border border-red-200 bg-red-50 px-2 py-0.5 text-[0.9rem] text-red-600 hover:border-red-300 disabled:opacity-50"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -144,35 +261,130 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
           <div className="space-y-2">
             <div>
               <h2 className="text-[0.9rem] font-semibold text-slate-800">
-                我收藏的考古題（假資料）
+                我收藏的考古題
               </h2>
               <p className="mt-1 text-[0.7rem] text-slate-500">
-                可以快速回到自己覺得有用的考古題，未來會顯示在個人收藏清單中。
+                快速回到有用的考古題💪
               </p>
             </div>
 
             <div className="mt-2 space-y-2">
-              {["線性代數 第二次期中考", "微積分 A 終極複習題"].map((title) => (
-                <article
-                  key={title}
-                  className="flex items-center justify-between rounded-lg border border-slate-100 bg-white px-3 py-2"
-                >
-                  <div>
-                    <h3 className="text-[0.9rem] font-semibold text-slate-900">
-                      {title}
-                    </h3>
-                    <p className="mt-0.5 text-[0.7rem] text-slate-500">
-                      來源科系、教授、年份等資訊之後會由後端提供。
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.7rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
+              {savedExams.length === 0 ? (
+                 <div className="py-4 text-center text-[0.9rem] text-slate-500">
+                   目前還沒有收藏任何考古題。
+                 </div>
+              ) : (
+                savedExams.map((item) => (
+                  <article
+                    key={item._id}
+                    onClick={(e) => handleItemClick(e, item._id)}
+                    className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-100 bg-white px-3 py-2 hover:bg-slate-50 transition-colors"
                   >
-                    前往考古題
-                  </button>
-                </article>
-              ))}
+                    <div>
+                      <h3 className="text-[0.9rem] font-semibold text-slate-900">
+                        {item.title}
+                      </h3>
+                      <p className="mt-0.5 text-[0.7rem] text-slate-500">
+                        {item.courseName} · {item.instructor} · {item.semester}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 relative">
+                      {/* Folder Button with Popover */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActivePopoverId(activePopoverId === item._id ? null : item._id);
+                            setIsCreatingFolder(false);
+                          }}
+                          className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
+                        >
+                          <Folder className="h-4 w-4" />
+                        </button>
+
+                        {activePopoverId === item._id && (
+                          <div 
+                            ref={popoverRef}
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-slate-200 bg-white p-2 shadow-xl z-10"
+                          >
+                             <p className="mb-2 px-1 text-[0.7rem] font-medium text-slate-500">
+                               選擇要加入的資料夾
+                             </p>
+                             <div className="max-h-48 overflow-y-auto space-y-1">
+                                {folders.map((folder: any) => (
+                                  <label 
+                                    key={folder._id}
+                                    className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50 cursor-pointer"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={item.savedInFolders?.includes(folder._id)}
+                                      onChange={(e) => handleFolderCheck(item._id, folder._id, item.savedInFolders || [], e.target.checked)}
+                                      className="h-3.5 w-3.5 rounded border-slate-300 text-theme-color focus:ring-theme-color"
+                                    />
+                                    <span className="text-[0.8rem] text-slate-700 truncate">{folder.name}</span>
+                                  </label>
+                                ))}
+                             </div>
+                             
+                             <div className="mt-2 border-t border-slate-100 pt-2">
+                                {isCreatingFolder ? (
+                                  <form onSubmit={handleCreateFolder} className="px-1">
+                                    <input
+                                      type="text"
+                                      autoFocus
+                                      placeholder="資料夾名稱"
+                                      value={newFolderName}
+                                      onChange={(e) => setNewFolderName(e.target.value)}
+                                      className="w-full rounded border border-slate-200 px-2 py-1 text-[0.8rem] focus:border-theme-color focus:outline-none"
+                                    />
+                                    <div className="mt-1 flex justify-end gap-1">
+                                      <button
+                                        type="button"
+                                        onClick={() => setIsCreatingFolder(false)}
+                                        className="text-[0.7rem] text-slate-500 hover:text-slate-700"
+                                      >
+                                        取消
+                                      </button>
+                                      <button
+                                        type="submit"
+                                        disabled={!newFolderName.trim()}
+                                        className="rounded bg-theme-color px-2 py-0.5 text-[0.7rem] text-white hover:bg-[#3d7a69]"
+                                      >
+                                        建立
+                                      </button>
+                                    </div>
+                                  </form>
+                                ) : (
+                                  <button
+                                    onClick={() => setIsCreatingFolder(true)}
+                                    className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-[0.8rem] text-theme-color hover:bg-slate-50"
+                                  >
+                                    <FolderPlus className="h-3.5 w-3.5" />
+                                    新增資料夾
+                                  </button>
+                                )}
+                              </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveCollection(item._id, item.title);
+                        }}
+                        className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-red-300 hover:text-red-600"
+                      >
+                         <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </article>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -184,4 +396,3 @@ export default function UserPage({ initialFolders = [], uploadedExams = [] }: Us
     </div>
   );
 }
-

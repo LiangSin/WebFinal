@@ -8,6 +8,7 @@ const UserSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   uploadedExams: [{ type: Schema.Types.ObjectId, ref: 'Exam' }],
   savedExams: [{ type: Schema.Types.ObjectId, ref: 'Exam' }],
+  flashedExams: [{ type: Schema.Types.ObjectId, ref: 'Exam' }],
   folders: [{
     name: { type: String, required: true },
     description: { type: String },
