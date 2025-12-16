@@ -28,60 +28,60 @@ export default function Home() {
           {/* 在後續步驟會改成共用元件與 mock data map */}
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.65rem] font-medium text-[#2f5c4f]">
                 資工系 · 必修
               </span>
-              <span className="flex items-center gap-1 text-[11px] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[10px] font-semibold text-slate-900">
+              <span className="flex items-center gap-1 text-[0.65rem] text-slate-500">
+                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
                   ⚡
                 </span>
                 128
               </span>
             </div>
-            <h3 className="line-clamp-2 text-[13px] font-semibold text-slate-900">
+            <h3 className="line-clamp-2 text-[0.77rem] font-semibold text-slate-900">
               計算機結構 第二次期中考（含官方解答）
             </h3>
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="mt-1 text-[0.65rem] text-slate-500">
               課程：計算機結構 ‧ 吳老師教授 · 113 學年度 · 期中考
             </p>
           </article>
 
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.65rem] font-medium text-[#2f5c4f]">
                 電機系 · 選修
               </span>
-              <span className="flex items-center gap-1 text-[11px] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[10px] font-semibold text-slate-900">
+              <span className="flex items-center gap-1 text-[0.65rem] text-slate-500">
+                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
                   ⚡
                 </span>
                 96
               </span>
             </div>
-            <h3 className="line-clamp-2 text-[13px] font-semibold text-slate-900">
+            <h3 className="line-clamp-2 text-[0.77rem] font-semibold text-slate-900">
               機率與統計 期末考（含非官方解）
             </h3>
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="mt-1 text-[0.65rem] text-slate-500">
               課程：機率與統計 ‧ 張老師教授 · 112 學年度 · 期末考
             </p>
           </article>
 
           <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
             <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[11px] font-medium text-[#2f5c4f]">
+              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.65rem] font-medium text-[#2f5c4f]">
                 通識 · 社科
               </span>
-              <span className="flex items-center gap-1 text-[11px] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[10px] font-semibold text-slate-900">
+              <span className="flex items-center gap-1 text-[0.65rem] text-slate-500">
+                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
                   ⚡
                 </span>
                 74
               </span>
             </div>
-            <h3 className="line-clamp-2 text-[13px] font-semibold text-slate-900">
+            <h3 className="line-clamp-2 text-[0.77rem] font-semibold text-slate-900">
               心理學概論 小考總整理（僅題目）
             </h3>
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="mt-1 text-[0.65rem] text-slate-500">
               課程：心理學概論 ‧ 李老師教授 · 111 學年度 · 小考
             </p>
           </article>
