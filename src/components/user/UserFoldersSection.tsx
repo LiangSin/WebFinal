@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CreateFolderModal } from "@/components/user/CreateFolderModal";
 import { FolderDetailModal } from "@/components/user/FolderDetailModal";
+import { FolderPlus } from "lucide-react";
 
 interface Folder {
   _id: string;
@@ -25,18 +26,21 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[13px] font-semibold text-slate-800">
+          <h2 className="text-[0.9rem] font-semibold text-slate-800">
             私人資料夾
           </h2>
-          <p className="mt-1 text-[11px] text-slate-500">
+          <p className="mt-1 text-[0.7rem] text-slate-500">
             您可以自行建立資料夾整理考古題。
           </p>
         </div>
         <button
           onClick={() => setIsCreateOpen(true)}
-          className="rounded-md bg-theme-color px-3 py-1.5 text-[11px] font-medium text-white hover:bg-[#3d7a69]"
+          className="rounded-md bg-theme-color px-3 py-1.5 text-[0.9rem] font-medium text-white hover:bg-[#3d7a69]"
         >
-          + 新增資料夾
+          <span className="inline-flex items-center gap-1">
+            <FolderPlus className="h-4 w-4" aria-hidden="true" />
+            <span>新增資料夾</span>
+          </span>
         </button>
       </div>
 
@@ -45,7 +49,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
           <p className="text-[0.9rem] text-slate-500">目前沒有資料夾</p>
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="mt-2 text-[11px] text-theme-color hover:underline"
+            className="mt-2 text-[0.7rem] text-theme-color hover:underline"
           >
             建立第一個資料夾
           </button>
@@ -67,7 +71,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
                     {folder.exams.length}
                   </span>
                 </div>
-                <p className="mt-1 line-clamp-2 h-8 text-[11px] text-slate-500">
+                <p className="mt-1 line-clamp-2 h-8 text-[0.7rem] text-slate-500">
                   {folder.description}
                 </p>
               </div>
