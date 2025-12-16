@@ -37,7 +37,7 @@ export function AuthButton() {
     return (
       <button
         type="button"
-        className="rounded-full border border-slate-300 px-4 py-1.5 text-xs text-slate-500"
+        className="rounded-full border border-slate-300 px-4 py-1.5 text-[0.9rem] text-slate-500"
         disabled
       >
         讀取中…
@@ -49,7 +49,7 @@ export function AuthButton() {
     return (
       <button
         type="button"
-        className="rounded-full border border-slate-300 px-4 py-1.5 text-xs text-slate-700 hover:border-theme-color hover:text-theme-color"
+        className="rounded-full border border-slate-300 px-4 py-1.5 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
         onClick={() => signIn("google")}
       >
         使用 g.ntu.edu.tw 登入
@@ -58,11 +58,11 @@ export function AuthButton() {
   }
 
   return (
-    <div className="flex items-center gap-2 text-xs">
+    <div className="flex items-center gap-2 text-[0.9rem]">
       <span className="text-slate-600">{email ?? "已登入"}</span>
       <button
         type="button"
-        className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-500 hover:border-red-300 hover:text-red-500"
+        className="rounded-full border border-slate-300 px-3 py-1 text-[0.9rem] text-slate-500 hover:border-red-300 hover:text-red-500"
         onClick={() => signOut()}
       >
         登出

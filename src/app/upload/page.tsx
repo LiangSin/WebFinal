@@ -61,7 +61,7 @@ export default function UploadPage() {
   };
 
   const baseInputClass =
-    "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-theme-color";
+    "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none ring-0 focus:border-theme-color";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6">
@@ -75,7 +75,7 @@ export default function UploadPage() {
       </header>
 
       <form
-        className="text-xs"
+        className="text-[0.9rem]"
         onSubmit={handleSubmit}
         noValidate
       >
@@ -296,7 +296,7 @@ export default function UploadPage() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full rounded-md bg-theme-color px-3 py-2 text-xs font-medium text-white hover:bg-[#3a7263]"
+              className="w-full rounded-md bg-theme-color px-3 py-2 text-[0.9rem] font-medium text-white hover:bg-[#3a7263]"
             >
               建立考古題（目前僅驗證必填欄位）
             </button>

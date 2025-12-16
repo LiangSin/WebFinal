@@ -48,7 +48,7 @@ export default function RootLayout({
                     <span className="text-2xl font-semibold text-slate-900">
                       Open Book
                     </span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-[0.9rem] text-slate-500">
                       台大考古題分享平台 - Prototype
                     </span>
                   </div>

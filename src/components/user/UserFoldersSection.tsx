@@ -20,7 +20,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
   // However, the parent page needs to pass the *latest* data.
   // Since this is a Client Component receiving props from Server Component, 
   // it will update when the parent re-renders (which revalidatePath triggers).
-  
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -42,7 +42,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: Folder[
 
       {initialFolders.length === 0 ? (
         <div className="flex h-32 flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
-          <p className="text-xs text-slate-500">目前沒有資料夾</p>
+          <p className="text-[0.9rem] text-slate-500">目前沒有資料夾</p>
           <button
             onClick={() => setIsCreateOpen(true)}
             className="mt-2 text-[11px] text-theme-color hover:underline"
