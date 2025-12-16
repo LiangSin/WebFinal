@@ -1,22 +1,22 @@
 export default function SearchPage() {
   return (
     <div className="flex gap-6">
-      <section className="w-80 shrink-0 rounded-xl border border-slate-200 bg-white p-4">
-        <h1 className="text-sm font-semibold text-slate-900">搜尋考古題</h1>
-        <p className="mt-1 text-xs text-slate-500">
+      <section className="w-80 shrink-0 rounded-xl border border-slate-200 bg-white p-6">
+        <h1 className="text-[1.1rem] font-semibold text-slate-900">搜尋考古題</h1>
+        <p className="mt-1 text-[0.9rem] text-slate-500">
           目前僅為介面示意，之後會串接實際搜尋 API。
         </p>
 
-        <div className="mt-4 space-y-4 text-xs">
+        <div className="mt-4 space-y-4 text-[0.9rem]">
           <div>
-            <label className="block text-[11px] font-medium text-slate-700">
+            <label className="block text-[0.9rem] font-medium text-slate-700">
               關鍵字
             </label>
             <input
-              className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-theme-color"
+              className="mt-1 w-full rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none ring-0 focus:border-theme-color"
               placeholder="輸入課程名稱或教授名"
             />
-            <div className="mt-2 flex gap-2 text-[11px] text-slate-500">
+            <div className="mt-2 flex gap-2 text-[0.9rem] text-slate-500">
               <label className="inline-flex items-center gap-1">
                 <input type="radio" name="keywordType" defaultChecked />
                 <span>用課程名稱搜尋</span>
@@ -29,17 +29,17 @@ export default function SearchPage() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-700">
+            <label className="block text-[0.9rem] font-medium text-slate-700">
               年份範圍
             </label>
             <div className="mt-1 flex items-center gap-2">
               <input
-                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-theme-color"
+                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
                 placeholder="111"
               />
-              <span className="text-[11px] text-slate-500">到</span>
+              <span className="text-[0.9rem] text-slate-500">到</span>
               <input
-                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none focus:border-theme-color"
+                className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
                 placeholder="113"
               />
             </div>
@@ -47,13 +47,13 @@ export default function SearchPage() {
 
           <div className="space-y-3">
             <div>
-              <p className="text-[11px] font-medium text-slate-700">科系</p>
+              <p className="text-[0.9rem] font-medium text-slate-700">科系</p>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {["資工系", "電機系", "數學系", "通識"].map((tag) => (
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -62,7 +62,7 @@ export default function SearchPage() {
             </div>
 
             <div>
-              <p className="text-[11px] font-medium text-slate-700">
+              <p className="text-[0.9rem] font-medium text-slate-700">
                 考試類別
               </p>
               <div className="mt-1 flex flex-wrap gap-1.5">
@@ -70,7 +70,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -79,7 +79,7 @@ export default function SearchPage() {
             </div>
 
             <div>
-              <p className="text-[11px] font-medium text-slate-700">
+              <p className="text-[0.9rem] font-medium text-slate-700">
                 是否包含答案
               </p>
               <div className="mt-1 flex flex-wrap gap-1.5">
@@ -87,7 +87,7 @@ export default function SearchPage() {
                   <button
                     key={tag}
                     type="button"
-                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
+                    className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[0.9rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
                   >
                     {tag}
                   </button>
@@ -98,36 +98,36 @@ export default function SearchPage() {
 
           <button
             type="button"
-            className="mt-2 w-full rounded-md bg-theme-color px-3 py-1.5 text-xs font-medium text-white hover:bg-[#3a7263]"
+            className="mt-2 w-full rounded-lg bg-theme-color px-3 py-1.5 text-[1.1rem] font-medium text-white hover:bg-[#3a7263]"
           >
             搜尋（目前僅更新下方假資料）
           </button>
         </div>
       </section>
 
-      <section className="flex-1 rounded-xl border border-slate-200 bg-white p-4">
+      <section className="flex-1 rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-semibold text-slate-900">
+            <h2 className="text-[1.1rem] font-semibold text-slate-900">
               搜尋結果（假資料）
             </h2>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-[0.9rem] text-slate-500">
               未來會依照實際搜尋條件動態更新，現在先以固定 mock
               data 呈現版型。
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-slate-500">
+          <div className="flex items-center gap-2 text-[0.9rem] text-slate-500">
             <span className="text-slate-400">排序：</span>
-            <button className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700">
+            <button className="rounded-full bg-slate-100 px-2 py-0.5 text-[0.9rem] font-medium text-slate-700">
               依閃電數
             </button>
-            <button className="rounded-full px-2 py-0.5 text-[11px] text-slate-500 hover:bg-slate-100">
+            <button className="rounded-full px-2 py-0.5 text-[0.9rem] text-slate-500 hover:bg-slate-100">
               依上傳時間
             </button>
           </div>
         </div>
 
-        <div className="mt-4 space-y-2 text-xs">
+        <div className="mt-4 space-y-2 text-[0.9rem]">
           {[
             {
               title: "計算機網路 期末考",
@@ -165,24 +165,24 @@ export default function SearchPage() {
               className="flex items-start justify-between rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2"
             >
               <div>
-                <h3 className="text-[13px] font-semibold text-slate-900">
+                <h3 className="text-[0.9rem] font-semibold text-slate-900">
                   {item.title}
                 </h3>
-                <p className="mt-0.5 text-[11px] text-slate-500">
+                <p className="mt-0.5 text-[0.9rem] text-slate-500">
                   課程：{item.course} ‧ {item.professor}教授 · {item.year}學年度 ·{" "}
                   {item.type}
                 </p>
-                <p className="mt-0.5 text-[11px] text-slate-500">
+                <p className="mt-0.5 text-[0.9rem] text-slate-500">
                   科系：{item.dept} · {item.hasAnswer}
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-1 text-[11px]">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#FFCB47]/10 px-2 py-0.5 text-[11px] font-medium text-[#b28719]">
+              <div className="flex flex-col items-end gap-3 text-[0.8rem]">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#FFCB47]/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#b28719]">
                   ⚡ {item.lightning}
                 </span>
                 <button
                   type="button"
-                  className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[11px] text-slate-600 hover:border-theme-color hover:text-theme-color"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[0.8rem] text-slate-600 hover:border-theme-color hover:text-theme-color"
                 >
                   查看詳細
                 </button>

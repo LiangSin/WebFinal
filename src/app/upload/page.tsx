@@ -64,12 +64,12 @@ export default function UploadPage() {
     "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-xs outline-none ring-0 focus:border-theme-color";
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
+    <div className="rounded-xl border border-slate-200 bg-white p-6">
       <header className="mb-4">
-        <h1 className="text-sm font-semibold text-slate-900">
-          上傳新的考古題（Prototype）
+        <h1 className="text-[1.1rem] font-semibold text-slate-900">
+          上傳新的考古題
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-[0.9rem] text-slate-500">
           目前僅做表單與版面示意，不會真的上傳檔案或建立資料。
         </p>
       </header>
@@ -81,60 +81,59 @@ export default function UploadPage() {
       >
         <section className="space-y-4">
           <div>
-            <label className="block text-[11px] font-medium text-slate-700">
+            <label className="block text-[0.9rem] font-medium text-slate-700">
               考古題名稱<span className="ml-1 text-red-500">*</span>
             </label>
             <input
-              className={`${baseInputClass} ${
-                errors.title ? "border-red-500" : "border-slate-200"
-              }`}
+              className={`${baseInputClass} ${errors.title ? "border-red-500" : "border-slate-200"
+                }`}
               placeholder="例：計算機結構 第二次期中考"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
             {errors.title && (
-              <p className="mt-1 text-[11px] text-red-500">{errors.title}</p>
+              <p className="mt-1 text-[0.9rem] text-red-500">{errors.title}</p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] font-medium text-slate-700">
+              <label className="block text-[0.9rem] font-medium text-slate-700">
                 課程名稱<span className="ml-1 text-red-500">*</span>
               </label>
               <input
-                className={`${baseInputClass} ${
-                  errors.course ? "border-red-500" : "border-slate-200"
-                }`}
+                className={`${baseInputClass} ${errors.course ? "border-red-500" : "border-slate-200"
+                  }`}
                 placeholder="課程全名"
                 value={form.course}
                 onChange={(e) => setForm({ ...form, course: e.target.value })}
               />
               {errors.course && (
-                <p className="mt-1 text-[11px] text-red-500">
+                <p className="mt-1 text-[0.9rem] text-red-500">
                   {errors.course}
                 </p>
               )}
             </div>
             <div>
-              <label className="block text-[11px] font-medium text-slate-700">
+              <label className="block text-[0.9rem] font-medium text-slate-700">
                 授課教授<span className="ml-1 text-red-500">*</span>
               </label>
-              <div className="mt-1 flex items-center gap-1">
+              <div className="flex w-full flex-nowrap items-center  gap-1">
                 <input
-                  className={`${baseInputClass} ${
-                    errors.professor ? "border-red-500" : "border-slate-200"
-                  }`}
+                  className={`${baseInputClass.replace("w-full", "flex-1")} ${errors.professor ? "border-red-500" : "border-slate-200"
+                    }`}
                   placeholder="輸入教授姓名"
                   value={form.professor}
                   onChange={(e) =>
                     setForm({ ...form, professor: e.target.value })
                   }
                 />
-                <span className="text-[11px] text-slate-500">教授</span>
+                <span className="w-10 shrink-0 text-left text-[0.9rem] text-slate-500 whitespace-nowrap">
+                  教授
+                </span>
               </div>
               {errors.professor && (
-                <p className="mt-1 text-[11px] text-red-500">
+                <p className="mt-1 text-[0.9rem] text-red-500">
                   {errors.professor}
                 </p>
               )}
@@ -143,35 +142,33 @@ export default function UploadPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-[11px] font-medium text-slate-700">
+              <label className="block text-[0.9rem] font-medium text-slate-700">
                 年份<span className="ml-1 text-red-500">*</span>
               </label>
               <input
-                className={`${baseInputClass} ${
-                  errors.year ? "border-red-500" : "border-slate-200"
-                }`}
+                className={`${baseInputClass} ${errors.year ? "border-red-500" : "border-slate-200"
+                  }`}
                 placeholder="例：113"
                 value={form.year}
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
               />
               {errors.year && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.year}</p>
+                <p className="mt-1 text-[0.9rem] text-red-500">{errors.year}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-[11px] font-medium text-slate-700">
+              <label className="block text-[0.9rem] font-medium text-slate-700">
                 考試類別<span className="ml-1 text-red-500">*</span>
               </label>
               <div
-                className={`mt-1 flex gap-2 rounded-md border bg-slate-50 px-2 py-1.5 ${
-                  errors.examType ? "border-red-500" : "border-slate-200"
-                }`}
+                className={`mt-1 flex gap-2 rounded-md border bg-slate-50 px-2 py-1.5 ${errors.examType ? "border-red-500" : "border-slate-200"
+                  }`}
               >
                 {["期中考", "期末考", "小考"].map((type) => (
                   <label
                     key={type}
-                    className="inline-flex items-center gap-1 text-[11px]"
+                    className="inline-flex items-center gap-1 text-[0.9rem]"
                   >
                     <input
                       type="radio"
@@ -190,25 +187,24 @@ export default function UploadPage() {
                 ))}
               </div>
               {errors.examType && (
-                <p className="mt-1 text-[11px] text-red-500">
+                <p className="mt-1 text-[0.9rem] text-red-500">
                   {errors.examType}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-[11px] font-medium text-slate-700">
+              <label className="block text-[0.9rem] font-medium text-slate-700">
                 是否包含答案<span className="ml-1 text-red-500">*</span>
               </label>
               <div
-                className={`mt-1 flex gap-2 rounded-md border bg-slate-50 px-2 py-1.5 ${
-                  errors.answerType ? "border-red-500" : "border-slate-200"
-                }`}
+                className={`mt-1 flex gap-2 rounded-md border bg-slate-50 px-2 py-1.5 ${errors.answerType ? "border-red-500" : "border-slate-200"
+                  }`}
               >
                 {["沒有", "包含官方解", "包含非官方解"].map((type) => (
                   <label
                     key={type}
-                    className="inline-flex items-center gap-1 text-[11px]"
+                    className="inline-flex items-center gap-1 text-[0.9rem]"
                   >
                     <input
                       type="radio"
@@ -227,7 +223,7 @@ export default function UploadPage() {
                 ))}
               </div>
               {errors.answerType && (
-                <p className="mt-1 text-[11px] text-red-500">
+                <p className="mt-1 text-[0.9rem] text-red-500">
                   {errors.answerType}
                 </p>
               )}
@@ -236,14 +232,14 @@ export default function UploadPage() {
 
           <section className="space-y-4">
             <div>
-              <p className="text-[11px] font-medium text-slate-700">
+              <p className="text-[0.9rem] font-medium text-slate-700">
                 上傳檔案（三選一或以上）
               </p>
-              <p className="mt-1 text-[11px] text-slate-500">
+              <p className="mt-1 text-[0.9rem] text-slate-500">
                 可以從電腦本機或 Google Drive 上傳 PDF 或圖片，每一區都可多檔。實作時會串接實際雲端儲存。
               </p>
               {errors.files && (
-                <p className="mt-1 text-[11px] text-red-500">{errors.files}</p>
+                <p className="mt-1 text-[0.9rem] text-red-500">{errors.files}</p>
               )}
             </div>
 
@@ -256,10 +252,10 @@ export default function UploadPage() {
                 key={group.id}
                 className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 p-3"
               >
-                <p className="text-[11px] font-medium text-slate-700">
+                <p className="text-[0.9rem] font-medium text-slate-700">
                   {group.label}
                 </p>
-                <p className="mt-1 text-[11px] text-slate-500">
+                <p className="mt-1 text-[0.9rem] text-slate-500">
                   可上傳多個檔案，支援 PDF / 圖片。Prototype
                   目前不會真的上傳，只展示功能入口位置。
                 </p>
@@ -267,18 +263,18 @@ export default function UploadPage() {
                   <button
                     type="button"
                     id={group.id}
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
                   >
                     選擇本機檔案
                   </button>
                   <button
                     type="button"
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
                   >
                     從 Google Drive 選擇
                   </button>
                 </div>
-                <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-400">
+                <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[0.9rem] text-slate-400">
                   這裡之後會顯示已選擇檔案列表（目前為示意）
                 </div>
               </div>
@@ -286,7 +282,7 @@ export default function UploadPage() {
           </section>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-700">
+            <label className="block text-[0.9rem] font-medium text-slate-700">
               其他說明（非必填）
             </label>
             <textarea

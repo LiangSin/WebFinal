@@ -35,7 +35,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <div className="min-h-screen">
-            <header className="border-b border-slate-200 bg-white">
+            <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
               <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
                 <Link href="/" className="flex items-center gap-4">
                   <Image
