@@ -98,9 +98,9 @@ export default function SearchPage() {
 
           <button
             type="button"
-            className="mt-2 w-full rounded-lg bg-theme-color px-3 py-1.5 text-[1.1rem] font-medium text-white hover:bg-[#3a7263]"
+            className="mt-2 w-full rounded-lg bg-theme-color px-3 py-1.5 text-[1.0rem] font-medium text-white hover:bg-[#3a7263]"
           >
-            搜尋（目前僅更新下方假資料）
+            搜尋
           </button>
         </div>
       </section>

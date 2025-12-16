@@ -14,14 +14,14 @@ export default function ExamDetailPage({ params }: ExamDetailPageProps) {
             <h1 className="mt-1 text-base font-semibold text-slate-900">
               計算機結構 第二次期中考（含官方解答）
             </h1>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-[0.9rem] text-slate-500">
               課程：計算機結構 ‧ 吳老師教授 · 113 學年度 · 期中考 · 資工系
             </p>
             <p className="mt-1 text-[0.65rem] text-slate-500">
               是否包含答案：官方解答、非官方解答
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2 text-xs">
+          <div className="flex flex-col items-end gap-2 text-[0.9rem]">
             <button
               type="button"
               className="inline-flex items-center gap-1 rounded-full bg-[#FFCB47]/10 px-3 py-1 text-[0.65rem] font-medium text-[#b28719]"
@@ -45,7 +45,7 @@ export default function ExamDetailPage({ params }: ExamDetailPageProps) {
           </div>
         </header>
 
-        <div className="mt-4 grid grid-cols-3 gap-3 text-xs">
+        <div className="mt-4 grid grid-cols-3 gap-3 text-[0.9rem]">
           {[
             { label: "題目檔案", files: ["midterm2_questions.pdf", "page1.jpg"] },
             { label: "官方解答", files: ["midterm2_solution_official.pdf"] },
@@ -86,7 +86,7 @@ export default function ExamDetailPage({ params }: ExamDetailPageProps) {
         </section>
       </section>
 
-      <aside className="w-72 shrink-0 rounded-xl border border-slate-200 bg-white p-4 text-xs">
+      <aside className="w-72 shrink-0 rounded-xl border border-slate-200 bg-white p-4 text-[0.9rem]">
         <p className="text-[0.65rem] font-medium text-slate-700">簡要資訊</p>
         <dl className="mt-2 space-y-1 text-[0.65rem] text-slate-600">
           <div className="flex justify-between">

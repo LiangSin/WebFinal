@@ -10,7 +10,7 @@ export default function Home() {
             目前最熱門、被按最多閃電的考古題。實際按讚與排序之後會串接 API。
           </p>
         </div>
-        <div className="rounded-full bg-[#FFCB47]/10 px-4 py-1 text-xs font-medium text-[#b28719]">
+        <div className="rounded-full bg-[#FFCB47]/10 px-4 py-1 text-[0.9rem] font-medium text-[#b28719]">
           Prototype 版 · 目前僅介面展示
         </div>
       </section>
@@ -26,7 +26,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-3 gap-3">
           {/* 在後續步驟會改成共用元件與 mock data map */}
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
+          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
             <div className="mb-2 flex items-center justify-between">
               <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
                 資工系 · 必修
@@ -46,7 +46,7 @@ export default function Home() {
             </p>
           </article>
 
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
+          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
             <div className="mb-2 flex items-center justify-between">
               <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
                 電機系 · 選修
@@ -66,7 +66,7 @@ export default function Home() {
             </p>
           </article>
 
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-xs">
+          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
             <div className="mb-2 flex items-center justify-between">
               <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
                 通識 · 社科

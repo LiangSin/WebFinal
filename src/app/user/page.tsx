@@ -28,7 +28,7 @@ export default async function UserPage() {
           </svg>
         </div>
         <h2 className="text-lg font-semibold text-slate-900">請先登入</h2>
-        <p className="mt-2 max-w-sm text-sm text-slate-500">
+        <p className="mt-2 max-w-sm text-[0.9rem] text-slate-500">
           您需要登入 G-Suite 信箱 (@g.ntu.edu.tw) 才能查看個人頁面、管理考古題與私人資料夾。
         </p>
         <div className="mt-6">
