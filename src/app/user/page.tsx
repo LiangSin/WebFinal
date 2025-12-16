@@ -1,4 +1,4 @@
-import { getUserFolders } from "./actions";
+import { getUserFolders, getUserUploadedExams } from "./actions";
 import UserPageClient from "@/components/user/UserPageClient";
 import { getServerSession } from "next-auth";
 import authConfig from "@/auth.config";
@@ -43,8 +43,9 @@ export default async function UserPage() {
   }
 
   const folders = await getUserFolders();
+  const uploadedExams = await getUserUploadedExams();
 
-  return <UserPageClient initialFolders={folders} />;
+  return <UserPageClient initialFolders={folders} uploadedExams={uploadedExams} />;
 }
 
 // 簡單的 Client Component 用來觸發登入
