@@ -36,12 +36,21 @@ export async function createExam(examData: {
   courseName: string;
   instructor?: string;
   semester?: string;
-  fileUrl?: string;
+  examType?: string;
+  hasAnswers?: string;
+  description?: string;
+  files?: Array<{ type: string; url: string; name: string; fileId?: string }>;
   uploadedBy: string; // User ID
 }) {
   await ensureDbConnection();
   const newExam = new Exam(examData);
   await newExam.save();
+
+  // Update user's uploadedExams
+  await User.findByIdAndUpdate(examData.uploadedBy, {
+    $push: { uploadedExams: newExam._id }
+  });
+
   return newExam.toObject();
 }
 

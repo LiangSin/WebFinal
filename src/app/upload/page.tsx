@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState, ChangeEvent } from "react";
+import { uploadExamAction } from "./actions";
 
 type ExamType = "期中考" | "期末考" | "小考";
 type AnswerType = "沒有" | "包含官方解" | "包含非官方解";
@@ -31,10 +32,23 @@ export default function UploadPage() {
   });
 
   const [errors, setErrors] = useState<UploadFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [files, setFiles] = useState<{
+    question: FileList | null;
+    official: FileList | null;
+    unofficial: FileList | null;
+  }>({ question: null, official: null, unofficial: null });
+
+  const questionInputRef = useRef<HTMLInputElement>(null);
+  const officialInputRef = useRef<HTMLInputElement>(null);
+  const unofficialInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (type: keyof typeof files) => (e: ChangeEvent<HTMLInputElement>) => {
+    setFiles(prev => ({ ...prev, [type]: e.target.files }));
+  };
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
     const newErrors: UploadFormErrors = {};
 
     if (!form.title.trim()) newErrors.title = "此欄位為必填";
@@ -45,23 +59,32 @@ export default function UploadPage() {
     if (!form.answerType) newErrors.answerType = "請選擇是否包含答案";
 
     const hasAnyFile =
-      document.getElementById("file-question") ||
-      document.getElementById("file-official") ||
-      document.getElementById("file-unofficial");
+      (files.question && files.question.length > 0) ||
+      (files.official && files.official.length > 0) ||
+      (files.unofficial && files.unofficial.length > 0);
 
     if (!hasAnyFile) {
-      newErrors.files = "三個區塊中至少需上傳一個檔案（僅示意，尚未連接實際檔案系統）";
+      newErrors.files = "三個區塊中至少需上傳一個檔案";
     }
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
-      alert("這裡之後會送出表單並上傳檔案，目前僅為 prototype 示意。");
+    if (Object.keys(newErrors).length > 0) {
+      e.preventDefault();
+      // Scroll to top or error?
+    } else {
+      // Allow submission
+      setIsSubmitting(true);
     }
   };
 
   const baseInputClass =
     "mt-1 w-full rounded-md border bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none ring-0 focus:border-theme-color";
+
+  const renderFileList = (fileList: FileList | null) => {
+    if (!fileList || fileList.length === 0) return "未選擇檔案";
+    return Array.from(fileList).map((f) => f.name).join(", ");
+  };
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-6">
@@ -70,13 +93,14 @@ export default function UploadPage() {
           上傳新的考古題
         </h1>
         <p className="mt-1 text-[0.9rem] text-slate-500">
-          目前僅做表單與版面示意，不會真的上傳檔案或建立資料。
+          請填寫完整資訊以協助他人搜尋。
         </p>
       </header>
 
       <form
         className="text-[0.9rem]"
         onSubmit={handleSubmit}
+        action={uploadExamAction}
         noValidate
       >
         <section className="space-y-4">
@@ -85,8 +109,10 @@ export default function UploadPage() {
               考古題名稱<span className="ml-1 text-red-500">*</span>
             </label>
             <input
-              className={`${baseInputClass} ${errors.title ? "border-red-500" : "border-slate-200"
-                }`}
+              name="title"
+              className={`${baseInputClass} ${
+                errors.title ? "border-red-500" : "border-slate-200"
+              }`}
               placeholder="例：計算機結構 第二次期中考"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -102,8 +128,10 @@ export default function UploadPage() {
                 課程名稱<span className="ml-1 text-red-500">*</span>
               </label>
               <input
-                className={`${baseInputClass} ${errors.course ? "border-red-500" : "border-slate-200"
-                  }`}
+                name="course"
+                className={`${baseInputClass} ${
+                  errors.course ? "border-red-500" : "border-slate-200"
+                }`}
                 placeholder="課程全名"
                 value={form.course}
                 onChange={(e) => setForm({ ...form, course: e.target.value })}
@@ -120,8 +148,10 @@ export default function UploadPage() {
               </label>
               <div className="flex w-full flex-nowrap items-center  gap-1">
                 <input
-                  className={`${baseInputClass.replace("w-full", "flex-1")} ${errors.professor ? "border-red-500" : "border-slate-200"
-                    }`}
+                  name="professor"
+                  className={`${baseInputClass.replace("w-full", "flex-1")} ${
+                    errors.professor ? "border-red-500" : "border-slate-200"
+                  }`}
                   placeholder="輸入教授姓名"
                   value={form.professor}
                   onChange={(e) =>
@@ -146,8 +176,10 @@ export default function UploadPage() {
                 年份<span className="ml-1 text-red-500">*</span>
               </label>
               <input
-                className={`${baseInputClass} ${errors.year ? "border-red-500" : "border-slate-200"
-                  }`}
+                name="year"
+                className={`${baseInputClass} ${
+                  errors.year ? "border-red-500" : "border-slate-200"
+                }`}
                 placeholder="例：113"
                 value={form.year}
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
@@ -236,17 +268,43 @@ export default function UploadPage() {
                 上傳檔案（三選一或以上）
               </p>
               <p className="mt-1 text-[0.9rem] text-slate-500">
-                可以從電腦本機或 Google Drive 上傳 PDF 或圖片，每一區都可多檔。實作時會串接實際雲端儲存。
+              可以上傳 PDF 或圖片，每一區都可多檔。
               </p>
               {errors.files && (
                 <p className="mt-1 text-[0.9rem] text-red-500">{errors.files}</p>
               )}
             </div>
 
+            {/* Hidden Inputs */}
+            <input
+              type="file"
+              name="file_question"
+              multiple
+              className="hidden"
+              ref={questionInputRef}
+              onChange={handleFileChange("question")}
+            />
+            <input
+              type="file"
+              name="file_official"
+              multiple
+              className="hidden"
+              ref={officialInputRef}
+              onChange={handleFileChange("official")}
+            />
+            <input
+              type="file"
+              name="file_unofficial"
+              multiple
+              className="hidden"
+              ref={unofficialInputRef}
+              onChange={handleFileChange("unofficial")}
+            />
+
             {[
-              { id: "file-question", label: "題目檔案" },
-              { id: "file-official", label: "官方解答" },
-              { id: "file-unofficial", label: "非官方解答" },
+              { id: "file-question", label: "題目檔案", ref: questionInputRef, fileList: files.question },
+              { id: "file-official", label: "官方解答", ref: officialInputRef, fileList: files.official },
+              { id: "file-unofficial", label: "非官方解答", ref: unofficialInputRef, fileList: files.unofficial },
             ].map((group) => (
               <div
                 key={group.id}
@@ -256,26 +314,19 @@ export default function UploadPage() {
                   {group.label}
                 </p>
                 <p className="mt-1 text-[0.9rem] text-slate-500">
-                  可上傳多個檔案，支援 PDF / 圖片。Prototype
-                  目前不會真的上傳，只展示功能入口位置。
+                  可上傳多個檔案，支援 PDF / 圖片。
                 </p>
                 <div className="mt-2 flex gap-2">
                   <button
                     type="button"
-                    id={group.id}
+                    onClick={() => group.ref.current?.click()}
                     className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
                   >
-                    選擇本機檔案
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
-                  >
-                    從 Google Drive 選擇
+                    選擇檔案
                   </button>
                 </div>
                 <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[0.9rem] text-slate-400">
-                  這裡之後會顯示已選擇檔案列表（目前為示意）
+                  {renderFileList(group.fileList)}
                 </div>
               </div>
             ))}
@@ -286,6 +337,7 @@ export default function UploadPage() {
               其他說明（非必填）
             </label>
             <textarea
+              name="note"
               className={`${baseInputClass} h-24 resize-none border-slate-200`}
               placeholder="例：我的字很醜請見諒、這份很難..."
               value={form.note}
@@ -296,9 +348,12 @@ export default function UploadPage() {
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full rounded-md bg-theme-color px-3 py-2 text-[0.9rem] font-medium text-white hover:bg-[#3a7263]"
+              disabled={isSubmitting}
+              className={`w-full rounded-md px-3 py-2 text-[0.9rem] font-medium text-white ${
+                isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-theme-color hover:bg-[#3a7263]"
+              }`}
             >
-              建立考古題（目前僅驗證必填欄位）
+              {isSubmitting ? "上傳中..." : "建立考古題"}
             </button>
           </div>
         </section>
@@ -306,5 +361,3 @@ export default function UploadPage() {
     </div>
   );
 }
-
-

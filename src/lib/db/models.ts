@@ -15,13 +15,21 @@ const UserSchema = new Schema({
   }]
 });
 
-// Exam Model (Placeholder based on project plan)
+// Exam Model
 const ExamSchema = new Schema({
   title: { type: String, required: true },
   courseName: { type: String, required: true },
   instructor: { type: String },
-  semester: { type: String }, // e.g., "112-1"
-  fileUrl: { type: String }, // URL to the uploaded file
+  semester: { type: String }, // e.g., "112-1" or "113"
+  examType: { type: String, enum: ["期中考", "期末考", "小考"] },
+  hasAnswers: { type: String, enum: ["沒有", "包含官方解", "包含非官方解"] },
+  description: { type: String },
+  files: [{
+    type: { type: String, enum: ["question", "official", "unofficial"] }, // e.g., "question", "official", "unofficial"
+    url: { type: String, required: true },
+    name: { type: String },
+    fileId: { type: String } // Google Drive File ID
+  }],
   uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   downloads: { type: Number, default: 0 },
   lightning: { type: Number, default: 0 },
