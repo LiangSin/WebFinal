@@ -75,11 +75,11 @@ export default function UploadPage() {
       </header>
 
       <form
-        className="grid grid-cols-3 gap-6 text-xs"
+        className="text-xs"
         onSubmit={handleSubmit}
         noValidate
       >
-        <section className="col-span-2 space-y-4">
+        <section className="space-y-4">
           <div>
             <label className="block text-[11px] font-medium text-slate-700">
               考古題名稱<span className="ml-1 text-red-500">*</span>
@@ -234,6 +234,57 @@ export default function UploadPage() {
             </div>
           </div>
 
+          <section className="space-y-4">
+            <div>
+              <p className="text-[11px] font-medium text-slate-700">
+                上傳檔案（三選一或以上）
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                可以從電腦本機或 Google Drive 上傳 PDF 或圖片，每一區都可多檔。實作時會串接實際雲端儲存。
+              </p>
+              {errors.files && (
+                <p className="mt-1 text-[11px] text-red-500">{errors.files}</p>
+              )}
+            </div>
+
+            {[
+              { id: "file-question", label: "題目檔案" },
+              { id: "file-official", label: "官方解答" },
+              { id: "file-unofficial", label: "非官方解答" },
+            ].map((group) => (
+              <div
+                key={group.id}
+                className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 p-3"
+              >
+                <p className="text-[11px] font-medium text-slate-700">
+                  {group.label}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  可上傳多個檔案，支援 PDF / 圖片。Prototype
+                  目前不會真的上傳，只展示功能入口位置。
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    id={group.id}
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                  >
+                    選擇本機檔案
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                  >
+                    從 Google Drive 選擇
+                  </button>
+                </div>
+                <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-400">
+                  這裡之後會顯示已選擇檔案列表（目前為示意）
+                </div>
+              </div>
+            ))}
+          </section>
+
           <div>
             <label className="block text-[11px] font-medium text-slate-700">
               其他說明（非必填）
@@ -245,57 +296,6 @@ export default function UploadPage() {
               onChange={(e) => setForm({ ...form, note: e.target.value })}
             />
           </div>
-        </section>
-
-        <section className="space-y-4">
-          <div>
-            <p className="text-[11px] font-medium text-slate-700">
-              上傳檔案（三選一或以上）
-            </p>
-            <p className="mt-1 text-[11px] text-slate-500">
-              可以從電腦本機或 Google Drive 上傳 PDF 或圖片，每一區都可多檔。實作時會串接實際雲端儲存。
-            </p>
-            {errors.files && (
-              <p className="mt-1 text-[11px] text-red-500">{errors.files}</p>
-            )}
-          </div>
-
-          {[
-            { id: "file-question", label: "題目檔案" },
-            { id: "file-official", label: "官方解答" },
-            { id: "file-unofficial", label: "非官方解答" },
-          ].map((group) => (
-            <div
-              key={group.id}
-              className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 p-3"
-            >
-              <p className="text-[11px] font-medium text-slate-700">
-                {group.label}
-              </p>
-              <p className="mt-1 text-[11px] text-slate-500">
-                可上傳多個檔案，支援 PDF / 圖片。Prototype
-                目前不會真的上傳，只展示功能入口位置。
-              </p>
-              <div className="mt-2 flex gap-2">
-                <button
-                  type="button"
-                  id={group.id}
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
-                >
-                  選擇本機檔案
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[11px] text-slate-700 hover:border-theme-color hover:text-theme-color"
-                >
-                  從 Google Drive 選擇
-                </button>
-              </div>
-              <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-400">
-                這裡之後會顯示已選擇檔案列表（目前為示意）
-              </div>
-            </div>
-          ))}
 
           <div className="pt-2">
             <button
