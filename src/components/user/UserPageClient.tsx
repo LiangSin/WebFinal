@@ -264,7 +264,7 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
                 我收藏的考古題
               </h2>
               <p className="mt-1 text-[0.7rem] text-slate-500">
-                可以快速回到自己覺得有用的考古題，未來會顯示在個人收藏清單中。
+                快速回到有用的考古題💪
               </p>
             </div>
 
