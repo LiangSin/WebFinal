@@ -301,35 +301,37 @@ export default function UploadPage() {
               onChange={handleFileChange("unofficial")}
             />
 
-            {[
-              { id: "file-question", label: "題目檔案", ref: questionInputRef, fileList: files.question },
-              { id: "file-official", label: "官方解答", ref: officialInputRef, fileList: files.official },
-              { id: "file-unofficial", label: "非官方解答", ref: unofficialInputRef, fileList: files.unofficial },
-            ].map((group) => (
-              <div
-                key={group.id}
-                className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 p-3"
-              >
-                <p className="text-[0.9rem] font-medium text-slate-700">
-                  {group.label}
-                </p>
-                <p className="mt-1 text-[0.9rem] text-slate-500">
-                  可上傳多個檔案，支援 PDF / 圖片。
-                </p>
-                <div className="mt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => group.ref.current?.click()}
-                    className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
-                  >
-                    選擇檔案
-                  </button>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { id: "file-question", label: "題目檔案", ref: questionInputRef, fileList: files.question },
+                { id: "file-official", label: "官方解答", ref: officialInputRef, fileList: files.official },
+                { id: "file-unofficial", label: "非官方解答", ref: unofficialInputRef, fileList: files.unofficial },
+              ].map((group) => (
+                <div
+                  key={group.id}
+                  className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 p-3"
+                >
+                  <p className="text-[0.9rem] font-medium text-slate-700">
+                    {group.label}
+                  </p>
+                  <p className="mt-1 text-[0.9rem] text-slate-500">
+                    可上傳多個檔案，支援 PDF / 圖片。
+                  </p>
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => group.ref.current?.click()}
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                    >
+                      選擇檔案
+                    </button>
+                  </div>
+                  <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[0.9rem] text-slate-400">
+                    {renderFileList(group.fileList)}
+                  </div>
                 </div>
-                <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[0.9rem] text-slate-400">
-                  {renderFileList(group.fileList)}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </section>
 
           <div>
