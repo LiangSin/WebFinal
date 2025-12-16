@@ -113,6 +113,7 @@ export async function toggleLightning(examId: string) {
 
   revalidatePath(`/exam/${examId}`);
   revalidatePath('/user');
+  revalidatePath('/'); // Revalidate trending page
 }
 
 export async function toggleCollection(examId: string) {
@@ -154,34 +155,14 @@ export async function updateExamFolders(examId: string, folderIds: string[]) {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
 
-  // We need to iterate over all user folders.
-  // For each folder:
-  // - If it is in folderIds, add examId (addToSet)
-  // - If it is NOT in folderIds, remove examId (pull)
-  
-  // Note: MongoDB bulkWrite or multiple updates might be needed, 
-  // but since folder list is small, we can just do two updates:
-  // 1. Pull examId from ALL folders not in folderIds (or just all, then add back?)
-  // Better: Pull from all, then push to selected. 
-  // Wait, if I pull from all, I lose the position if order matters? Order doesn't matter much here.
-  
-  // Strategy:
-  // 1. Remove examId from all folders.
-  // 2. Add examId to folders in folderIds.
-  
-  // 1. Remove from all
+  // 1. Remove from all folders
   await User.updateOne(
     { _id: userId },
     { $pull: { "folders.$[].exams": examId } }
   );
 
   // 2. Add to specific folders
-  // We can't easily use arrayFilters for multiple specific IDs in one go with $addToSet efficiently if we want to target multiple specific array elements by ID.
-  // Actually we can iterate.
-  
   if (folderIds.length > 0) {
-      // Use bulkWrite for efficiency if possible, or just a loop. Loop is fine for small N.
-      // Or:
       await User.updateOne(
           { _id: userId },
           { 
@@ -193,10 +174,7 @@ export async function updateExamFolders(examId: string, folderIds: string[]) {
       );
   }
 
-  // Also ensure it is in savedExams if it's in a folder?
-  // Requirement says: "In collection list... also record which folders".
-  // Usually if I put it in a folder, it implies it is collected.
-  // So let's ensure it's in savedExams too.
+  // Also ensure it is in savedExams
   await User.findByIdAndUpdate(userId, {
       $addToSet: { savedExams: examId }
   });
@@ -205,3 +183,28 @@ export async function updateExamFolders(examId: string, folderIds: string[]) {
   revalidatePath('/user');
 }
 
+export async function getTrendingExams(limit = 10) {
+  await ensureDbConnection();
+  
+  try {
+    const exams = await Exam.find({})
+      .sort({ lightning: -1 })
+      .limit(limit)
+      .lean();
+
+    return exams.map((exam: any) => ({
+      _id: exam._id.toString(),
+      title: exam.title,
+      courseName: exam.courseName,
+      instructor: exam.instructor,
+      semester: exam.semester,
+      examType: exam.examType,
+      hasAnswers: exam.hasAnswers,
+      lightning: exam.lightning || 0,
+      createdAt: exam.createdAt ? exam.createdAt.toISOString() : null,
+    }));
+  } catch (error) {
+    console.error("Error fetching trending exams:", error);
+    return [];
+  }
+}

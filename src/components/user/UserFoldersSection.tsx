@@ -72,7 +72,7 @@ export function UserFoldersSection({ initialFolders }: { initialFolders: any[] }
             私人資料夾
           </h2>
           <p className="mt-1 text-[0.7rem] text-slate-500">
-            您可以自行建立資料夾整理考古題。
+            自行建立資料夾整理考古題
           </p>
         </div>
         <button

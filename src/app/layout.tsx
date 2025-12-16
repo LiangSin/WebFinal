@@ -49,7 +49,7 @@ export default function RootLayout({
                       Open Book
                     </span>
                     <span className="text-[0.9rem] text-slate-500">
-                      台大考古題分享平台 - Prototype
+                      台大考古題分享平台
                     </span>
                   </div>
                 </Link>

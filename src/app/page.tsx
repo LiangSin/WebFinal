@@ -1,4 +1,12 @@
-export default function Home() {
+import Link from "next/link";
+import { Zap } from "lucide-react";
+import { getTrendingExams } from "@/app/exam/actions";
+
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  const trendingExams = await getTrendingExams(10);
+
   return (
     <div className="flex flex-col gap-6">
       <section className="flex items-center justify-between">
@@ -7,85 +15,57 @@ export default function Home() {
             Trending⚡️ 考古題
           </h1>
           <p className="mt-1 text-[0.9rem] text-slate-500">
-            目前最熱門、被按最多閃電的考古題。實際按讚與排序之後會串接 API。
+            目前最熱門、被按最多閃電的考古題⚡️
           </p>
-        </div>
-        <div className="rounded-full bg-[#FFCB47]/10 px-4 py-1 text-[0.9rem] font-medium text-[#b28719]">
-          Prototype 版 · 目前僅介面展示
         </div>
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-[1.1rem] font-medium text-slate-700">
-            今日最受歡迎考古題
+            最受歡迎考古題
           </h2>
-          <span className="text-[0.9rem] text-slate-400">
-            假資料示意 · 之後會改成從後端載入
-          </span>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          {/* 在後續步驟會改成共用元件與 mock data map */}
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
-                資工系 · 必修
-              </span>
-              <span className="flex items-center gap-1 text-[0.9rem] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
-                  ⚡
-                </span>
-                128
-              </span>
-            </div>
-            <h3 className="line-clamp-2 text-[0.9rem] font-semibold text-slate-900">
-              計算機結構 第二次期中考（含官方解答）
-            </h3>
-            <p className="mt-1 text-[0.9rem] text-slate-500">
-              課程：計算機結構 ‧ 吳老師教授 · 113 學年度 · 期中考
-            </p>
-          </article>
-
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
-                電機系 · 選修
-              </span>
-              <span className="flex items-center gap-1 text-[0.9rem] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
-                  ⚡
-                </span>
-                96
-              </span>
-            </div>
-            <h3 className="line-clamp-2 text-[0.9rem] font-semibold text-slate-900">
-              機率與統計 期末考（含非官方解）
-            </h3>
-            <p className="mt-1 text-[0.9rem] text-slate-500">
-              課程：機率與統計 ‧ 張老師教授 · 112 學年度 · 期末考
-            </p>
-          </article>
-
-          <article className="flex flex-col rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-[0.9rem]">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="rounded-md bg-theme-color/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#2f5c4f]">
-                通識 · 社科
-              </span>
-              <span className="flex items-center gap-1 text-[0.9rem] text-slate-500">
-                <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#FFCB47]/90 text-[0.59rem] font-semibold text-slate-900">
-                  ⚡
-                </span>
-                74
-              </span>
-            </div>
-            <h3 className="line-clamp-2 text-[0.9rem] font-semibold text-slate-900">
-              心理學概論 小考總整理（僅題目）
-            </h3>
-            <p className="mt-1 text-[0.9rem] text-slate-500">
-              課程：心理學概論 ‧ 李老師教授 · 111 學年度 · 小考
-            </p>
-          </article>
-        </div>
+        
+        {trendingExams.length === 0 ? (
+          <div className="py-12 text-center text-slate-500">
+            目前還沒有考古題資料。
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {trendingExams.map((exam) => (
+              <Link
+                key={exam._id}
+                href={`/exam/${exam._id}`}
+                className="group relative flex flex-col justify-between rounded-lg border border-slate-100 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-theme-color/50 hover:bg-white hover:shadow-md"
+              >
+                <div>
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <h3 className="text-[0.95rem] font-semibold text-slate-900 line-clamp-2 group-hover:text-theme-color">
+                      {exam.title}
+                    </h3>
+                    <div className="flex shrink-0 items-center gap-1 rounded-full bg-[#FFCB47]/10 px-2 py-0.5 text-[0.7rem] font-medium text-[#b28719]">
+                      <Zap className="h-3 w-3 fill-[#b28719]" />
+                      <span>{exam.lightning}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1 text-[0.8rem] text-slate-500">
+                    <p>課程：{exam.courseName} ‧ {exam.instructor}</p>
+                    <p>{exam.semester} ‧ {exam.examType}</p>
+                    <p>解答：{exam.hasAnswers}</p>
+                  </div>
+                </div>
+                
+                <div className="mt-3 flex items-center justify-end border-t border-slate-100 pt-3">
+                  <span className="text-[0.75rem] text-slate-400 group-hover:text-theme-color">
+                    查看詳情 →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
