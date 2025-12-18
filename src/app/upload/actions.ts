@@ -21,6 +21,7 @@ export async function uploadExamAction(formData: FormData) {
   const title = formData.get("title") as string;
   const course = formData.get("course") as string;
   const professor = formData.get("professor") as string;
+  const department = formData.get("department") as string | null;
   const year = formData.get("year") as string;
   const examType = formData.get("examType") as string;
   const answerType = formData.get("answerType") as string;
@@ -66,6 +67,7 @@ export async function uploadExamAction(formData: FormData) {
     title,
     courseName: course,
     instructor: professor,
+    department: department || undefined,
     semester: year,
     examType,
     hasAnswers: answerType,

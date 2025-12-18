@@ -6,6 +6,12 @@ import { uploadExamAction } from "./actions";
 type ExamType = "期中考" | "期末考" | "小考";
 type AnswerType = "沒有" | "包含官方解" | "包含非官方解";
 
+type UploadFilesState = {
+  question: FileList | null;
+  official: FileList | null;
+  unofficial: FileList | null;
+};
+
 interface UploadFormState {
   title: string;
   course: string;
@@ -19,6 +25,9 @@ interface UploadFormState {
 type UploadFormErrors = Partial<Record<keyof UploadFormState, string>> & {
   files?: string;
 };
+
+const MAX_FILE_SIZE_MB = 5;
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export default function UploadPage() {
   const [form, setForm] = useState<UploadFormState>({
@@ -34,21 +43,51 @@ export default function UploadPage() {
   const [errors, setErrors] = useState<UploadFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [files, setFiles] = useState<{
-    question: FileList | null;
-    official: FileList | null;
-    unofficial: FileList | null;
-  }>({ question: null, official: null, unofficial: null });
+  const [files, setFiles] = useState<UploadFilesState>({
+    question: null,
+    official: null,
+    unofficial: null,
+  });
+  const [fileSizeError, setFileSizeError] = useState<string | null>(null);
 
   const questionInputRef = useRef<HTMLInputElement>(null);
   const officialInputRef = useRef<HTMLInputElement>(null);
   const unofficialInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (type: keyof typeof files) => (e: ChangeEvent<HTMLInputElement>) => {
-    setFiles(prev => ({ ...prev, [type]: e.target.files }));
+  const getFileSizeError = (fileState: UploadFilesState) => {
+    for (const list of Object.values(fileState)) {
+      if (!list) continue;
+      for (const file of Array.from(list)) {
+        if (file.size > MAX_FILE_SIZE) {
+          return `檔案「${file.name}」超過 ${MAX_FILE_SIZE_MB}MB，請重新選擇`;
+        }
+      }
+    }
+    return null;
   };
 
+  const validateFileSizes = (nextFiles: UploadFilesState) => {
+    const message = getFileSizeError(nextFiles);
+    setFileSizeError(message);
+    return !message;
+  };
+
+  const handleFileChange =
+    (type: keyof UploadFilesState) => (e: ChangeEvent<HTMLInputElement>) => {
+      const fileList = e.target.files;
+      setFiles((prev) => {
+        const updated = { ...prev, [type]: fileList };
+        validateFileSizes(updated);
+        return updated;
+      });
+    };
+
   const handleSubmit = (e: FormEvent) => {
+    if (!validateFileSizes(files)) {
+      e.preventDefault();
+      return;
+    }
+
     const newErrors: UploadFormErrors = {};
 
     if (!form.title.trim()) newErrors.title = "此欄位為必填";
@@ -268,10 +307,13 @@ export default function UploadPage() {
                 上傳檔案（三選一或以上）
               </p>
               <p className="mt-1 text-[0.9rem] text-slate-500">
-              可以上傳 PDF 或圖片，每一區都可多檔。
+                可以上傳 PDF 或圖片，每一區都可多檔，單檔大小上限 {MAX_FILE_SIZE_MB}MB。
               </p>
               {errors.files && (
                 <p className="mt-1 text-[0.9rem] text-red-500">{errors.files}</p>
+              )}
+              {fileSizeError && (
+                <p className="mt-1 text-[0.9rem] text-red-500">{fileSizeError}</p>
               )}
             </div>
 
@@ -350,9 +392,11 @@ export default function UploadPage() {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!fileSizeError}
               className={`w-full rounded-md px-3 py-2 text-[0.9rem] font-medium text-white ${
-                isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-theme-color hover:bg-[#3a7263]"
+                isSubmitting || fileSizeError
+                  ? "bg-slate-400 cursor-not-allowed"
+                  : "bg-theme-color hover:bg-[#3a7263]"
               }`}
             >
               {isSubmitting ? "上傳中..." : "建立考古題"}

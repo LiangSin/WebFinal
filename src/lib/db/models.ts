@@ -21,6 +21,7 @@ const ExamSchema = new Schema({
   title: { type: String, required: true },
   courseName: { type: String, required: true },
   instructor: { type: String },
+  department: { type: String },
   semester: { type: String }, // e.g., "112-1" or "113"
   examType: { type: String, enum: ["期中考", "期末考", "小考"] },
   hasAnswers: { type: String, enum: ["沒有", "包含官方解", "包含非官方解"] },
