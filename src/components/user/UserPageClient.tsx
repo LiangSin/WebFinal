@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { UserFoldersSection } from "@/components/user/UserFoldersSection";
 import { Pencil, Trash2, Folder, FolderPlus, X } from "lucide-react";
 import { EditExamModal } from "./EditExamModal";
@@ -48,6 +48,13 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
   const popoverRef = useRef<HTMLDivElement>(null);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [isUpdatingMap, setIsUpdatingMap] = useState<Record<string, boolean>>({});
+  const [savedSelections, setSavedSelections] = useState<Record<string, string[]>>(
+    () =>
+      Object.fromEntries(
+        savedExams.map((exam) => [exam._id, exam.savedInFolders || []])
+      )
+  );
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "未知時間";
@@ -98,25 +105,32 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activePopoverId]);
 
-  const handleFolderCheck = async (examId: string, folderId: string, currentFolders: string[], checked: boolean) => {
-    let newSavedInFolders;
-    if (checked) {
-      newSavedInFolders = [...currentFolders, folderId];
-    } else {
-      newSavedInFolders = currentFolders.filter(id => id !== folderId);
-    }
-    
-    // We update the local state optimistically?
-    // The parent component (UserPage) passes savedExams. We can't mutate props.
-    // We should rely on router.refresh() (which server actions do automatically via revalidatePath)
-    // But to make it feel responsive, we might want to wait.
-    
+  const getSavedSelection = (examId: string) =>
+    savedSelections[examId] ??
+    savedExams.find((e) => e._id === examId)?.savedInFolders ??
+    [];
+
+  const handleFolderCheck = (examId: string, folderId: string, checked: boolean) => {
+    setSavedSelections((prev) => {
+      const current = prev[examId] ?? [];
+      const next = checked
+        ? Array.from(new Set([...current, folderId]))
+        : current.filter((id) => id !== folderId);
+      return { ...prev, [examId]: next };
+    });
+  };
+
+  const applyFolderSelection = async (examId: string) => {
+    const selection = getSavedSelection(examId);
+    setIsUpdatingMap((prev) => ({ ...prev, [examId]: true }));
     try {
-      await updateExamFolders(examId, newSavedInFolders);
-      // Revalidation happens on server, page should update.
+      await updateExamFolders(examId, selection);
+      alert("已更新收藏資料夾");
     } catch (error) {
       console.error("Error updating exam folders:", error);
-      alert("更新失敗");
+      alert("更新資料夾失敗，請稍後再試");
+    } finally {
+      setIsUpdatingMap((prev) => ({ ...prev, [examId]: false }));
     }
   };
 
@@ -144,6 +158,15 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
   useEffect(() => {
     setFolders(initialFolders);
   }, [initialFolders]);
+
+  // Sync saved selections when savedExams change (e.g., after reload)
+  useEffect(() => {
+    setSavedSelections(
+      Object.fromEntries(
+        savedExams.map((exam) => [exam._id, exam.savedInFolders || []])
+      )
+    );
+  }, [savedExams]);
 
   const handleItemClick = (e: React.MouseEvent, examId: string) => {
     // Prevent navigation if clicking buttons
@@ -264,7 +287,7 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
                 我收藏的考古題
               </h2>
               <p className="mt-1 text-[0.7rem] text-slate-500">
-                快速回到有用的考古題💪
+                快速複習有用的考古題💪
               </p>
             </div>
 
@@ -320,14 +343,29 @@ export default function UserPage({ initialFolders = [], uploadedExams = [], save
                                   >
                                     <input
                                       type="checkbox"
-                                      checked={item.savedInFolders?.includes(folder._id)}
-                                      onChange={(e) => handleFolderCheck(item._id, folder._id, item.savedInFolders || [], e.target.checked)}
+                                      checked={getSavedSelection(item._id).includes(folder._id)}
+                                      onChange={(e) =>
+                                        handleFolderCheck(item._id, folder._id, e.target.checked)
+                                      }
                                       className="h-3.5 w-3.5 rounded border-slate-300 text-theme-color focus:ring-theme-color"
                                     />
                                     <span className="text-[0.8rem] text-slate-700 truncate">{folder.name}</span>
                                   </label>
                                 ))}
                              </div>
+
+                             <button
+                               type="button"
+                               onClick={() => applyFolderSelection(item._id)}
+                               disabled={!!isUpdatingMap[item._id]}
+                               className={`mt-2 w-full rounded-md px-2 py-1 text-[0.8rem] font-medium text-white ${
+                                 isUpdatingMap[item._id]
+                                   ? "bg-slate-400 cursor-not-allowed"
+                                   : "bg-theme-color hover:bg-[#3d7a69]"
+                               }`}
+                             >
+                               {isUpdatingMap[item._id] ? "更新中..." : "加入資料夾"}
+                             </button>
                              
                              <div className="mt-2 border-t border-slate-100 pt-2">
                                 {isCreatingFolder ? (

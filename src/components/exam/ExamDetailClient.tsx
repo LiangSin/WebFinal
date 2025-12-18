@@ -22,6 +22,7 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
   const [showFolderMenu, setShowFolderMenu] = useState(false);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
+  const [isUpdatingFolders, setIsUpdatingFolders] = useState(false);
 
   const folderMenuRef = useRef<HTMLDivElement>(null);
 
@@ -100,20 +101,22 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
     }
   }
 
-  const handleFolderCheck = async (folderId: string, checked: boolean) => {
-    let newSavedInFolders;
-    if (checked) {
-      newSavedInFolders = [...savedInFolders, folderId];
-    } else {
-      newSavedInFolders = savedInFolders.filter(id => id !== folderId);
-    }
-    setSavedInFolders(newSavedInFolders);
+  const handleFolderCheck = (folderId: string, checked: boolean) => {
+    setSavedInFolders((prev) =>
+      checked ? [...prev, folderId] : prev.filter((id) => id !== folderId)
+    );
+  };
 
+  const applyFolderSelection = async () => {
+    setIsUpdatingFolders(true);
     try {
-      await updateExamFolders(exam._id, newSavedInFolders);
+      await updateExamFolders(exam._id, savedInFolders);
+      alert("已更新收藏資料夾");
     } catch (error) {
       console.error("Error updating exam folders:", error);
-      // Revert is complex here, maybe just alert or refetch
+      alert("更新資料夾失敗，請稍後再試");
+    } finally {
+      setIsUpdatingFolders(false);
     }
   };
 
@@ -140,16 +143,6 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
         setFolders(prev => prev.map(f => f._id === tempId ? { ...f, _id: newFolderData._id } : f));
         setSavedInFolders(prev => prev.map(id => id === tempId ? newFolderData._id : id));
         
-        // Also need to persist the check state to backend for this new folder
-        // Because createFolder just creates it, it doesn't add the exam to it automatically unless we changed that logic?
-        // Wait, "if I add folder in the small box, default means I want to add exam to that folder".
-        // createFolder doesn't take examId. We need to call updateExamFolders or similar.
-        
-        // Actually, we should just call updateExamFolders with the new list including the new real ID.
-        // But we need to wait for real ID.
-        
-        const updatedFoldersList = [...savedInFolders.filter(id => id !== tempId), newFolderData._id];
-        await updateExamFolders(exam._id, updatedFoldersList);
       } else {
          // Fallback reload if we didn't get data back for some reason (shouldn't happen with updated action)
          window.location.reload();
@@ -243,6 +236,19 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
                       </label>
                     ))}
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={applyFolderSelection}
+                    disabled={isUpdatingFolders}
+                    className={`mt-2 w-full rounded-md px-2 py-1 text-[0.8rem] font-medium text-white ${
+                      isUpdatingFolders
+                        ? "bg-slate-400 cursor-not-allowed"
+                        : "bg-theme-color hover:bg-[#3d7a69]"
+                    }`}
+                  >
+                    {isUpdatingFolders ? "更新中..." : "加入資料夾"}
+                  </button>
 
                   <div className="mt-2 border-t border-slate-100 pt-2">
                     {isCreatingFolder ? (
