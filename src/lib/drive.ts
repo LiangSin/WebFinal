@@ -22,7 +22,7 @@ function getDriveClient() {
   return google.drive({ version: 'v3', auth: oauth2Client });
 }
 
-export async function uploadToDrive(file: File, folderId?: string) {
+export async function uploadToDrive(file: File, folderId?: string, customFileName?: string) {
   try {
     const drive = getDriveClient();
 
@@ -32,7 +32,7 @@ export async function uploadToDrive(file: File, folderId?: string) {
     stream.push(null);
 
     const fileMetadata: any = {
-      name: file.name,
+      name: customFileName || file.name,
     };
     
     const targetFolderId = folderId || process.env.GOOGLE_DRIVE_FOLDER_ID;
