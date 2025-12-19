@@ -12,10 +12,10 @@ export default async function Home() {
       <section className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900">
-            Trending⚡️ 考古題
+            Trending⚡️
           </h1>
           <p className="mt-1 text-[0.9rem] text-slate-500">
-            目前最熱門、被按最多閃電的考古題⚡️
+            目前最熱門、被按最多閃電的考古題
           </p>
         </div>
       </section>
