@@ -23,10 +23,16 @@ export async function uploadExamAction(formData: FormData) {
   const course = formData.get("course") as string;
   const professor = formData.get("professor") as string;
   const department = formData.get("department") as string | null;
-  const year = formData.get("year") as string;
+  let year = formData.get("year") as string;
   const examType = formData.get("examType") as string;
   const answerType = formData.get("answerType") as string;
   const note = formData.get("note") as string;
+
+  // Convert AD year to ROC year if applicable
+  const yearNum = parseInt(year);
+  if (!isNaN(yearNum) && yearNum > 1911) {
+    year = (yearNum - 1911).toString();
+  }
 
   const filesData: Array<{ type: string; url: string; name: string; fileId?: string }> = [];
 
