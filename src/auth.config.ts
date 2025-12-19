@@ -9,6 +9,9 @@ const config: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
   callbacks: {
     /**
      * 僅允許 g.ntu.edu.tw 網域的信箱登入

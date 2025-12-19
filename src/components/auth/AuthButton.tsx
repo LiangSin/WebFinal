@@ -1,9 +1,11 @@
 "use client";
 
 import { signIn, signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function AuthButton() {
+  const pathname = usePathname();
   const [status, setStatus] = useState<"loading" | "signedIn" | "signedOut">(
     "loading",
   );
@@ -32,6 +34,8 @@ export function AuthButton() {
 
     fetchSession();
   }, []);
+
+  if (pathname === "/login") return null;
 
   if (status === "loading") {
     return (
