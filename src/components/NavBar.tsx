@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 export function NavBar() {
   const pathname = usePathname();
 
+  if (pathname === "/login") return null;
+
   const isActive = (path: string) => {
     if (path === "/") return pathname === "/";
     return pathname.startsWith(path);

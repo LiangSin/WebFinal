@@ -6,6 +6,7 @@ import { uploadToDrive } from "@/lib/drive";
 import { createExam, getUserByEmail } from "@/lib/db/operations";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { randomBytes } from "crypto";
 
 export async function uploadExamAction(formData: FormData) {
   const session = await getServerSession(authConfig);
@@ -22,10 +23,16 @@ export async function uploadExamAction(formData: FormData) {
   const course = formData.get("course") as string;
   const professor = formData.get("professor") as string;
   const department = formData.get("department") as string | null;
-  const year = formData.get("year") as string;
+  let year = formData.get("year") as string;
   const examType = formData.get("examType") as string;
   const answerType = formData.get("answerType") as string;
   const note = formData.get("note") as string;
+
+  // Convert AD year to ROC year if applicable
+  const yearNum = parseInt(year);
+  if (!isNaN(yearNum) && yearNum > 1911) {
+    year = (yearNum - 1911).toString();
+  }
 
   const filesData: Array<{ type: string; url: string; name: string; fileId?: string }> = [];
 
@@ -35,13 +42,27 @@ export async function uploadExamAction(formData: FormData) {
     { key: "file_unofficial", type: "unofficial" },
   ];
 
+  const categoryMap: Record<string, string> = {
+    question: "題目",
+    official: "官方解答",
+    unofficial: "非官方解答",
+  };
+
+  // Generate a short unique ID (4 bytes hex = 8 characters)
+  const uniqueId = randomBytes(4).toString('hex');
+
   // Upload files sequentially to avoid hitting rate limits or issues
   for (const { key, type } of fileTypes) {
     const files = formData.getAll(key) as File[];
     for (const file of files) {
       if (file && file.size > 0 && file.name !== "undefined") {
         try {
-          const result = await uploadToDrive(file);
+          const lastDotIndex = file.name.lastIndexOf('.');
+          const extension = lastDotIndex !== -1 ? file.name.substring(lastDotIndex) : "";
+          // Format: {考古題名稱}_{unique id}_{題目或官方解答或非官方解答}
+          const newName = `${title}_${uniqueId}_${categoryMap[type]}${extension}`;
+
+          const result = await uploadToDrive(file, undefined, newName);
           filesData.push({
             type,
             url: result.webViewLink || "",
