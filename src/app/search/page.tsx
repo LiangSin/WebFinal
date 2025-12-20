@@ -57,8 +57,8 @@ function buildTagClass(isActive: boolean) {
 export default function SearchPage() {
   const [keyword, setKeyword] = useState("");
   const [keywordType, setKeywordType] = useState<KeywordType>("course");
-  const [yearStart, setYearStart] = useState("111");
-  const [yearEnd, setYearEnd] = useState("113");
+  const [yearStart, setYearStart] = useState("");
+  const [yearEnd, setYearEnd] = useState("");
   const [selectedExamTypes, setSelectedExamTypes] = useState<string[]>([]);
   const [selectedAnswerTypes, setSelectedAnswerTypes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("lightning");
@@ -269,14 +269,14 @@ export default function SearchPage() {
             <div className="mt-1 flex items-center gap-2">
               <input
                 className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
-                placeholder="111"
+                placeholder="98"
                 value={yearStart}
                 onChange={(event) => setYearStart(event.target.value)}
               />
               <span className="text-[0.9rem] text-slate-500">到</span>
               <input
                 className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
-                placeholder="113"
+                placeholder="114"
                 value={yearEnd}
                 onChange={(event) => setYearEnd(event.target.value)}
               />
