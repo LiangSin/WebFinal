@@ -71,6 +71,8 @@ export async function getExam(examId: string) {
       description: exam.description,
       lightning: exam.lightning || 0,
       createdAt: exam.createdAt ? exam.createdAt.toISOString() : null,
+      reportCount: exam.reportCount ?? 0,
+      lastReportedAt: exam.lastReportedAt ? exam.lastReportedAt.toISOString() : null,
       files: (exam.files || []).map((f: any) => ({
         type: f.type,
         url: f.url,
