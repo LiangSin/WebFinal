@@ -56,7 +56,10 @@ export async function adminLogin(username: string, password: string) {
 
 export async function adminLogout() {
   const cookieStore = await cookies();
-  cookieStore.delete(MONITOR_COOKIE);
+  cookieStore.delete({
+    name: MONITOR_COOKIE,
+    path: '/monitor',
+  });
   return { success: true };
 }
 
