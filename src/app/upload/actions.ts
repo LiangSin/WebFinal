@@ -23,15 +23,29 @@ export async function uploadExamAction(formData: FormData) {
   const course = formData.get("course") as string;
   const professor = formData.get("professor") as string;
   const department = formData.get("department") as string | null;
-  let year = formData.get("year") as string;
+  const yearRaw = formData.get("year") as string;
+  const yearType = (formData.get("yearType") as string) || "ROC";
   const examType = formData.get("examType") as string;
   const answerType = formData.get("answerType") as string;
   const note = formData.get("note") as string;
 
-  // Convert AD year to ROC year if applicable
-  const yearNum = parseInt(year);
-  if (!isNaN(yearNum) && yearNum > 1911) {
-    year = (yearNum - 1911).toString();
+  // Convert to ROC year based on user's selection (AD -> ROC)
+  const yearNum = parseInt(yearRaw, 10);
+  let year = yearRaw;
+
+  if (yearType === "AD" && (isNaN(yearNum) || yearNum < 1911)) {
+    throw new Error("年份錯誤！");
+  }
+
+  if (!isNaN(yearNum)) {
+    if (yearType === "AD") {
+      year = (yearNum - 1911).toString();
+    } else if (yearType === "ROC") {
+      year = yearNum.toString();
+    } else if (yearNum > 1911) {
+      // Fallback for legacy submissions without yearType
+      year = (yearNum - 1911).toString();
+    }
   }
 
   const filesData: Array<{ type: string; url: string; name: string; fileId?: string }> = [];

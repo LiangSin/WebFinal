@@ -5,6 +5,7 @@ import { uploadExamAction } from "./actions";
 
 type ExamType = "期中考" | "期末考" | "小考";
 type AnswerType = "沒有" | "包含官方解" | "包含非官方解";
+type YearType = "ROC" | "AD";
 
 type UploadFilesState = {
   question: FileList | null;
@@ -17,6 +18,7 @@ interface UploadFormState {
   course: string;
   professor: string;
   year: string;
+  yearType: YearType;
   examType: ExamType | "";
   answerType: AnswerType | "";
   note: string;
@@ -35,6 +37,7 @@ export default function UploadPage() {
     course: "",
     professor: "",
     year: "",
+    yearType: "ROC",
     examType: "",
     answerType: "",
     note: "",
@@ -53,6 +56,39 @@ export default function UploadPage() {
   const questionInputRef = useRef<HTMLInputElement>(null);
   const officialInputRef = useRef<HTMLInputElement>(null);
   const unofficialInputRef = useRef<HTMLInputElement>(null);
+
+  const inputRefMap: Record<
+    keyof UploadFilesState,
+    React.RefObject<HTMLInputElement | null>
+  > = {
+    question: questionInputRef,
+    official: officialInputRef,
+    unofficial: unofficialInputRef,
+  };
+
+  const mergeFileLists = (existing: FileList | null, incoming: FileList | null) => {
+    if (!incoming || incoming.length === 0) return existing;
+    const dt = new DataTransfer();
+    if (existing) {
+      Array.from(existing).forEach((file) => dt.items.add(file));
+    }
+    Array.from(incoming).forEach((file) => dt.items.add(file));
+    return dt.files;
+  };
+
+  const resetFiles = (type: keyof UploadFilesState) => {
+    setFiles((prev) => {
+      const updated = { ...prev, [type]: null };
+      validateFileSizes(updated);
+
+      const ref = inputRefMap[type];
+      if (ref?.current) {
+        ref.current.value = "";
+        ref.current.files = new DataTransfer().files;
+      }
+      return updated;
+    });
+  };
 
   const getFileSizeError = (fileState: UploadFilesState) => {
     for (const list of Object.values(fileState)) {
@@ -75,9 +111,20 @@ export default function UploadPage() {
   const handleFileChange =
     (type: keyof UploadFilesState) => (e: ChangeEvent<HTMLInputElement>) => {
       const fileList = e.target.files;
+      if (!fileList || fileList.length === 0) return;
       setFiles((prev) => {
-        const updated = { ...prev, [type]: fileList };
+        const merged = mergeFileLists(prev[type], fileList);
+        const updated = { ...prev, [type]: merged };
         validateFileSizes(updated);
+
+        // Keep the actual input.files in sync so form submission sends all files
+        const ref = inputRefMap[type];
+        if (ref?.current) {
+          const syncDT = new DataTransfer();
+          Array.from(merged ?? []).forEach((file) => syncDT.items.add(file));
+          ref.current.files = syncDT.files;
+        }
+
         return updated;
       });
     };
@@ -96,6 +143,14 @@ export default function UploadPage() {
     if (!form.year.trim()) newErrors.year = "此欄位為必填";
     if (!form.examType) newErrors.examType = "請選擇一個考試類別";
     if (!form.answerType) newErrors.answerType = "請選擇是否包含答案";
+
+    // Validate AD year lower bound
+    const yearNum = parseInt(form.year, 10);
+    if (form.yearType === "AD") {
+      if (isNaN(yearNum) || yearNum < 1911) {
+        newErrors.year = "年份錯誤！";
+      }
+    }
 
     const hasAnyFile =
       (files.question && files.question.length > 0) ||
@@ -211,15 +266,36 @@ export default function UploadPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-[0.9rem] font-medium text-slate-700">
-                年份<span className="ml-1 text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[0.9rem] font-medium text-slate-700">
+                  年份<span className="ml-1 text-red-500">*</span>
+                </label>
+                <div className="flex items-center gap-3 text-[0.9rem] text-slate-500">
+                  {[
+                    { value: "ROC", label: "民國" },
+                    { value: "AD", label: "西元" },
+                  ].map((option) => (
+                    <label key={option.value} className="inline-flex items-center gap-1">
+                      <input
+                        type="radio"
+                        name="yearType"
+                        value={option.value}
+                        checked={form.yearType === option.value}
+                        onChange={() =>
+                          setForm({ ...form, yearType: option.value as YearType })
+                        }
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
               <input
                 name="year"
                 className={`${baseInputClass} ${
                   errors.year ? "border-red-500" : "border-slate-200"
                 }`}
-                placeholder="例：113"
+                placeholder={form.yearType === "AD" ? "例：2024" : "例：113"}
                 value={form.year}
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
               />
@@ -359,14 +435,30 @@ export default function UploadPage() {
                   <p className="mt-1 text-[0.9rem] text-slate-500">
                     可上傳多個檔案，支援 PDF / 圖片。
                   </p>
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-2 flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => group.ref.current?.click()}
-                      className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-700 hover:border-theme-color hover:text-theme-color"
+                      className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-theme-color hover:border-theme-color hover:text-theme-color"
                     >
-                      選擇檔案
+                      {group.fileList && group.fileList.length > 0 ? (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="text-theme-color">+</span>
+                          <span className="text-theme-color">新增</span>
+                        </span>
+                      ) : (
+                        <span className="text-theme-color">選擇檔案</span>
+                      )}
                     </button>
+                    {group.fileList && group.fileList.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => resetFiles(group.id.replace("file-", "") as keyof UploadFilesState)}
+                        className="rounded-md border border-slate-300 bg-white px-3 py-1 text-[0.9rem] text-slate-500 hover:border-red-400 hover:text-red-500"
+                      >
+                        移除全部
+                      </button>
+                    )}
                   </div>
                   <div className="mt-2 rounded-md border border-slate-200 bg-white px-2 py-1 text-[0.9rem] text-slate-400">
                     {renderFileList(group.fileList)}
