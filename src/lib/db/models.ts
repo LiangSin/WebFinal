@@ -36,6 +36,13 @@ const ExamSchema = new Schema({
   downloads: { type: Number, default: 0 },
   lightning: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
+  reportCount: { type: Number, default: 0 },
+  lastReportedAt: { type: Date },
+  reportHistory: [{
+    reportedAt: { type: Date, default: Date.now },
+    reportedBy: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    note: { type: String, maxlength: 200 }
+  }],
 });
 
 // Prevent Mongoose OverwriteModelError and ensure Schema updates in dev

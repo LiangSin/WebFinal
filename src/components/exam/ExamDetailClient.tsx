@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Zap, Bookmark, FolderPlus, Download, Check, FileText } from "lucide-react";
+import { Zap, Bookmark, FolderPlus, Download, Check, FileText, Flag } from "lucide-react";
 import { toggleLightning, toggleCollection, updateExamFolders } from "@/app/exam/actions";
 import { createFolder } from "@/app/user/actions"; // Reuse createFolder from user actions
 import Link from "next/link";
@@ -18,6 +18,9 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
   const [isSaved, setIsSaved] = useState(exam.isSaved);
   const [savedInFolders, setSavedInFolders] = useState<string[]>(exam.savedInFolders || []);
   const [folders, setFolders] = useState(initialFolders);
+  const [reportCount, setReportCount] = useState<number>(exam.reportCount ?? 0);
+  const [isReporting, setIsReporting] = useState(false);
+  const [hasReported, setHasReported] = useState(false);
   
   const [showFolderMenu, setShowFolderMenu] = useState(false);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -55,6 +58,53 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
       // Revert
       setIsFlashed(!newStatus);
       setLightningCount((prev: number) => !newStatus ? prev + 1 : prev - 1);
+    }
+  };
+
+  const handleReport = async () => {
+    if (!userId) {
+      alert("請先登入");
+      return;
+    }
+
+    if (hasReported) {
+      alert("已收到你的檢舉，感謝提供資訊！");
+      return;
+    }
+
+    if (!confirm("確定要檢舉這份考古題嗎？")) {
+      return;
+    }
+
+    setIsReporting(true);
+    try {
+      const response = await fetch("/api/exams/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ examId: exam._id }),
+      });
+
+      if (response.status === 401) {
+        alert("請先登入");
+        setIsReporting(false);
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to report exam");
+      }
+
+      const data = await response.json();
+      setReportCount(data.reportCount ?? reportCount + 1);
+      setHasReported(true);
+      alert("已收到你的檢舉，我們會盡快處理。");
+    } catch (error) {
+      console.error("Error reporting exam:", error);
+      alert("檢舉失敗，請稍後再試。");
+    } finally {
+      setIsReporting(false);
     }
   };
 
@@ -300,6 +350,7 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
                 </div>
               )}
             </div>
+
           </div>
         </header>
 
@@ -354,22 +405,44 @@ export default function ExamDetailClient({ exam, userFolders: initialFolders, us
         </section>
       </section>
 
-      <aside className="w-80 shrink-0 rounded-xl border border-slate-200 bg-white p-5 text-[1rem]">
-        <p className="text-[0.8rem] font-medium text-slate-700">簡要資訊</p>
-        <dl className="mt-3 space-y-2 text-[0.8rem] text-slate-600">
-          <div className="flex justify-between">
-            <dt className="text-slate-500">上傳者</dt>
-            <dd>匿名</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-slate-500">上傳時間</dt>
-            <dd suppressHydrationWarning>{exam.createdAt ? new Date(exam.createdAt).toLocaleString('zh-TW') : '未知'}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-slate-500">檔案總數</dt>
-            <dd>{exam.files.length} 個</dd>
-          </div>
-        </dl>
+      <aside className="flex h-full w-80 shrink-0 flex-col justify-between rounded-xl border border-slate-200 bg-white p-5 text-[1rem]">
+        <div>
+          <p className="text-[0.8rem] font-medium text-slate-700">簡要資訊</p>
+          <dl className="mt-3 space-y-2 text-[0.8rem] text-slate-600">
+            <div className="flex justify-between">
+              <dt className="text-slate-500">上傳者</dt>
+              <dd>匿名</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-slate-500">上傳時間</dt>
+              <dd suppressHydrationWarning>{exam.createdAt ? new Date(exam.createdAt).toLocaleString('zh-TW') : '未知'}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-slate-500">檔案總數</dt>
+              <dd>{exam.files.length} 個</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="-mx-5 -mb-5 flex flex-col items-center border-t border-slate-100 px-5 pb-5 pt-6">
+          <button
+            type="button"
+            onClick={handleReport}
+            disabled={isReporting || hasReported}
+            className={`flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-1 text-[0.75rem] font-medium transition-colors ${
+              hasReported
+                ? "border-red-100 bg-red-50 text-red-400 cursor-not-allowed"
+                : "border-red-200 bg-red-100 text-red-600 hover:bg-red-200"
+            }`}
+            aria-disabled={isReporting || hasReported}
+          >
+            <Flag className="h-3.5 w-3.5" />
+            {hasReported ? "已檢舉" : isReporting ? "檢舉中..." : "檢舉"}
+          </button>
+          <p className="mt-1 text-center text-[0.7rem] text-slate-500">
+            已被檢舉 {reportCount} 次
+          </p>
+        </div>
       </aside>
     </div>
   );
