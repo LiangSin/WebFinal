@@ -1,16 +1,17 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, useEffect } from "react";
 import {
   adminLogout,
   deleteExamAdmin,
   fetchRecentExams,
   fetchReportedExams,
+  clearExamReportCount,
 } from "@/app/monitor/actions";
 import { MonitorExam, MonitorRange } from "@/app/monitor/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, PencilLine, RefreshCcw, LogOut, FileText } from "lucide-react";
+import { Trash2, PencilLine, RefreshCcw, LogOut, FileText, Eraser } from "lucide-react";
 
 interface MonitorClientProps {
   initialReported: MonitorExam[];
@@ -45,6 +46,18 @@ export default function MonitorClient({
       await deleteExamAdmin(examId);
       setReportedExams((prev) => prev.filter((exam) => exam._id !== examId));
       setRecentExams((prev) => prev.filter((exam) => exam._id !== examId));
+    });
+  };
+
+  const handleClearReport = (examId: string) => {
+    if (!confirm("確定要清空此項目的檢舉次數嗎？")) return;
+    startTransition(async () => {
+      await clearExamReportCount(examId);
+      setReportedExams((prev) => prev.filter((exam) => exam._id !== examId));
+      // update recent list as well if needed (reportCount reset to 0)
+      setRecentExams((prev) => 
+        prev.map(exam => exam._id === examId ? { ...exam, reportCount: 0 } : exam)
+      );
     });
   };
 
@@ -133,6 +146,7 @@ export default function MonitorClient({
                 key={exam._id}
                 exam={exam}
                 onDelete={() => handleDelete(exam._id)}
+                onClearReport={() => handleClearReport(exam._id)}
               />
             ))}
           </div>
@@ -192,9 +206,25 @@ export default function MonitorClient({
 interface ExamCardProps {
   exam: MonitorExam;
   onDelete: () => void;
+  onClearReport?: () => void;
 }
 
-function ExamCard({ exam, onDelete }: ExamCardProps) {
+function FormattedDate({ dateString }: { dateString: string | null }) {
+  const [formatted, setFormatted] = useState<string>("");
+
+  useEffect(() => {
+    if (dateString) {
+      setFormatted(new Date(dateString).toLocaleString("zh-TW"));
+    } else {
+      setFormatted("未知");
+    }
+  }, [dateString]);
+
+  if (!formatted) return <span>載入中...</span>;
+  return <span>{formatted}</span>;
+}
+
+function ExamCard({ exam, onDelete, onClearReport }: ExamCardProps) {
   return (
     <article className="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -223,6 +253,15 @@ function ExamCard({ exam, onDelete }: ExamCardProps) {
             <PencilLine className="h-4 w-4" />
             編輯
           </Link>
+          {onClearReport && exam.reportCount > 0 && (
+            <button
+              onClick={onClearReport}
+              className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-3 py-1 text-sm text-slate-600 hover:bg-slate-100"
+            >
+              <Eraser className="h-4 w-4" />
+              清空檢舉
+            </button>
+          )}
           <button
             onClick={onDelete}
             className="inline-flex items-center gap-1 rounded-md border border-red-200 px-3 py-1 text-sm text-red-500 hover:bg-red-50"
@@ -233,15 +272,17 @@ function ExamCard({ exam, onDelete }: ExamCardProps) {
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-500">
-        <span>上傳：{exam.createdAt ? new Date(exam.createdAt).toLocaleString("zh-TW") : "未知"}</span>
+        <span>上傳：<FormattedDate dateString={exam.createdAt || null} /></span>
         <span>解答：{exam.hasAnswers || "未標註"}</span>
         <span>類型：{exam.examType || "未標註"}</span>
         {exam.reportCount > 0 && (
           <span className="font-medium text-red-500">
             被檢舉 {exam.reportCount} 次 ·{" "}
-            {exam.lastReportedAt
-              ? new Date(exam.lastReportedAt).toLocaleString("zh-TW")
-              : "無時間"}
+            {exam.lastReportedAt ? (
+              <FormattedDate dateString={exam.lastReportedAt} />
+            ) : (
+              "無時間"
+            )}
           </span>
         )}
       </div>

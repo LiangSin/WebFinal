@@ -154,6 +154,17 @@ export async function deleteExamAdmin(examId: string) {
   return { success: true };
 }
 
+export async function clearExamReportCount(examId: string) {
+  await requireAdmin();
+  await ensureDbConnection();
+  
+  await Exam.findByIdAndUpdate(examId, {
+    $set: { reportCount: 0, lastReportedAt: null }
+  });
+  
+  return { success: true };
+}
+
 export async function getExamForAdmin(examId: string) {
   await requireAdmin();
   await ensureDbConnection();
