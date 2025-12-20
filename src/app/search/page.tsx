@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type KeywordType = "course" | "professor";
 type SortOption = "lightning" | "createdAt";
+type YearType = "ROC" | "AD";
 
 interface SearchPayload {
   keyword?: string;
@@ -44,6 +45,11 @@ function parseYearInput(value: string): number | undefined {
   return Number.isNaN(parsed) ? undefined : parsed;
 }
 
+function convertToRocYear(value: number | undefined, type: YearType): number | undefined {
+  if (value === undefined) return undefined;
+  return type === "AD" ? value - 1911 : value;
+}
+
 function buildTagClass(isActive: boolean) {
   const base =
     "rounded-full border px-2 py-0.5 text-[0.9rem] transition-colors duration-150";
@@ -59,6 +65,7 @@ export default function SearchPage() {
   const [keywordType, setKeywordType] = useState<KeywordType>("course");
   const [yearStart, setYearStart] = useState("");
   const [yearEnd, setYearEnd] = useState("");
+  const [yearType, setYearType] = useState<YearType>("ROC");
   const [selectedExamTypes, setSelectedExamTypes] = useState<string[]>([]);
   const [selectedAnswerTypes, setSelectedAnswerTypes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortOption>("lightning");
@@ -71,12 +78,14 @@ export default function SearchPage() {
   const searchPayload = useMemo<SearchPayload>(() => {
     const start = parseYearInput(yearStart);
     const end = parseYearInput(yearEnd);
+    const startRoc = convertToRocYear(start, yearType);
+    const endRoc = convertToRocYear(end, yearType);
 
     return {
       keyword: keyword.trim() ? keyword.trim() : undefined,
       keywordType,
-      yearStart: start,
-      yearEnd: end,
+      yearStart: startRoc,
+      yearEnd: endRoc,
       examTypes: selectedExamTypes,
       answerTypes: selectedAnswerTypes,
       sortBy,
@@ -89,6 +98,7 @@ export default function SearchPage() {
     keywordType,
     yearStart,
     yearEnd,
+    yearType,
     selectedExamTypes,
     selectedAnswerTypes,
     sortBy,
@@ -106,18 +116,28 @@ export default function SearchPage() {
     const startVal = parseYearInput(yearStart);
     const endVal = parseYearInput(yearEnd);
 
-    const isOutOfRange = (value?: number) =>
-      value !== undefined && (value < 90 || value > 150);
+    if (startTrim && startVal === undefined) return "年份需為數字";
+    if (endTrim && endVal === undefined) return "年份需為數字";
 
-    if (startTrim && startVal === undefined) return "年份需為 90~150 的數字";
-    if (endTrim && endVal === undefined) return "年份需為 90~150 的數字";
-    if (isOutOfRange(startVal) || isOutOfRange(endVal)) {
-      return "搜尋年份不合法";
+    if (yearType === "AD") {
+      if (startTrim && startVal !== undefined && startVal < 1911) {
+        return "年份錯誤！";
+      }
+      if (endTrim && endVal !== undefined && endVal < 1911) {
+        return "年份錯誤！";
+      }
     }
+
+    const startRoc = convertToRocYear(startVal, yearType);
+    const endRoc = convertToRocYear(endVal, yearType);
+
+    if (startRoc !== undefined && startRoc <= 0) return "年份不合法";
+    if (endRoc !== undefined && endRoc <= 0) return "年份不合法";
+
     if (
-      typeof startVal === "number" &&
-      typeof endVal === "number" &&
-      startVal > endVal
+      typeof startRoc === "number" &&
+      typeof endRoc === "number" &&
+      startRoc > endRoc
     ) {
       return "開始年份不可大於結束年份";
     }
@@ -212,6 +232,8 @@ export default function SearchPage() {
 
   const keywordPlaceholder =
     keywordType === "professor" ? "輸入教授姓名" : "輸入課程名稱";
+  const yearPlaceholderStart = yearType === "AD" ? "2020" : "110";
+  const yearPlaceholderEnd = yearType === "AD" ? "2024" : "114";
 
   return (
     <div className="flex gap-6">
@@ -266,24 +288,41 @@ export default function SearchPage() {
             <label className="block text-[0.9rem] font-medium text-slate-700">
               年份範圍
             </label>
+            <div className="mt-1 flex items-center gap-3 text-[0.9rem] text-slate-500">
+              {[
+                { value: "ROC", label: "民國" },
+                { value: "AD", label: "西元" },
+              ].map((option) => (
+                <label key={option.value} className="inline-flex items-center gap-1">
+                  <input
+                    type="radio"
+                    name="yearType"
+                    value={option.value}
+                    checked={yearType === option.value}
+                    onChange={() => setYearType(option.value as YearType)}
+                  />
+                  <span>{option.label}</span>
+                </label>
+              ))}
+            </div>
             <div className="mt-1 flex items-center gap-2">
               <input
                 className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
-                placeholder="98"
+                placeholder={yearPlaceholderStart}
                 value={yearStart}
                 onChange={(event) => setYearStart(event.target.value)}
               />
               <span className="text-[0.9rem] text-slate-500">到</span>
               <input
                 className="w-20 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.9rem] outline-none focus:border-theme-color"
-                placeholder="114"
+                placeholder={yearPlaceholderEnd}
                 value={yearEnd}
                 onChange={(event) => setYearEnd(event.target.value)}
               />
             </div>
-            {/* {yearErrorMessage && (
+            {yearErrorMessage && (
               <p className="mt-1 text-[0.8rem] text-red-500">{yearErrorMessage}</p>
-            )} */}
+            )}
           </div>
 
           <div className="space-y-3">
