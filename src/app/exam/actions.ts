@@ -210,3 +210,29 @@ export async function getTrendingExams(limit = 10) {
     return [];
   }
 }
+
+export async function getNewestExams(limit = 9) {
+  await ensureDbConnection();
+  
+  try {
+    const exams = await Exam.find({})
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return exams.map((exam: any) => ({
+      _id: exam._id.toString(),
+      title: exam.title,
+      courseName: exam.courseName,
+      instructor: exam.instructor,
+      semester: exam.semester,
+      examType: exam.examType,
+      hasAnswers: exam.hasAnswers,
+      lightning: exam.lightning || 0,
+      createdAt: exam.createdAt ? exam.createdAt.toISOString() : null,
+    }));
+  } catch (error) {
+    console.error("Error fetching newest exams:", error);
+    return [];
+  }
+}
