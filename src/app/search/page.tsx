@@ -435,44 +435,42 @@ export default function SearchPage() {
 
           {!error &&
             results.map((item) => (
-              <article
+              <Link
                 key={item._id}
-                className="flex items-start justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2"
+                href={`/exam/${item._id}`}
+                className="group block rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2 transition-colors hover:border-theme-color hover:bg-white focus:outline-none focus:ring-2 focus:ring-theme-color focus:ring-offset-2 focus:ring-offset-white"
+                aria-label={`查看詳細：${item.title}`}
               >
-                <div>
-                  <h3 className="text-[0.95rem] font-semibold text-slate-900">
-                    {item.title}
-                  </h3>
-                  <p className="mt-0.5 text-[0.9rem] text-slate-500">
-                    課程：{item.courseName}
-                    {item.instructor
-                      ? ` ‧ ${item.instructor}教授`
-                      : " ‧ 未提供授課教師"}
-                  </p>
-                  <p className="mt-0.5 text-[0.9rem] text-slate-500">
-                    {item.department ? `科系：${item.department} · ` : ""}
-                    {item.semester ? `${item.semester} 學年度 · ` : ""}
-                    {item.examType ?? "類別未標註"}
-                  </p>
-                  <p className="mt-0.5 text-[0.9rem] text-slate-500">
-                    解答：{item.hasAnswers ?? "未標註"} · 上傳時間：
-                    {item.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString("zh-TW")
-                      : "未知"}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-3 text-[0.8rem]">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[#FFCB47]/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#b28719]">
-                    ⚡ {item.lightning}
-                  </span>
-                  <Link
-                    href={`/exam/${item._id}`}
-                    className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[0.8rem] text-slate-600 transition-colors hover:border-theme-color hover:text-theme-color"
-                  >
-                    查看詳細
-                  </Link>
-                </div>
-              </article>
+                <article className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-[0.95rem] font-semibold text-slate-900 group-hover:text-theme-color">
+                      {item.title}
+                    </h3>
+                    <p className="mt-0.5 text-[0.9rem] text-slate-500">
+                      課程：{item.courseName}
+                      {item.instructor
+                        ? ` ‧ ${item.instructor}教授`
+                        : " ‧ 未提供授課教師"}
+                    </p>
+                    <p className="mt-0.5 text-[0.9rem] text-slate-500">
+                      {item.department ? `科系：${item.department} · ` : ""}
+                      {item.semester ? `${item.semester} 學年度 · ` : ""}
+                      {item.examType ?? "類別未標註"}
+                    </p>
+                    <p className="mt-0.5 text-[0.9rem] text-slate-500">
+                      解答：{item.hasAnswers ?? "未標註"} · 上傳時間：
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString("zh-TW")
+                        : "未知"}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-3 text-[0.8rem]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FFCB47]/10 px-2 py-0.5 text-[0.9rem] font-medium text-[#b28719]">
+                      ⚡ {item.lightning}
+                    </span>
+                  </div>
+                </article>
+              </Link>
             ))}
         </div>
       </section>
