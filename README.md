@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WebFinal｜Open Book 台大考古題分享平台
+Group 29 賴亮昕、顏佐霏、劉軒齊
 
-## Getting Started
+## 重要連結
 
-First, run the development server:
+Demo 影片連結: <TODO>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Deployment link: https://web-final-lemon.vercel.app/
+Monitor link: https://web-final-lemon.vercel.app/monitor
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Github link: https://github.com/LiangSin/WebFinal
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 使用說明
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+我們做這個網站，是因為每學期、每年大家都在用各種群組、雲端連結分散地收集考古題，不但很麻煩，也常常找不到、連結失效或版本混亂。希望做一個只給台大學生使用、集中整理、好找又好分享的平台，讓考古題的流通更有效率，也讓準備考試更有依據，**要卷大家一起卷**。
 
-## Learn More
+主要功能包含：
+- 依課程或教授名篩選考古題
+- 上傳分享考古題，讓每位使用者貢獻考古題資源
+- 透過資料夾收藏題目，方便複習
 
-To learn more about Next.js, take a look at the following resources:
+使用與操作方式：
+1. 使用 @g.ntu.edu.tw 的 Google 帳號登入
+2. 在 Trending⚡️ 頁面瀏覽熱門和最新上傳的考古題，或是使用搜尋功能尋找你想要的考古題
+3. 你可以自由收藏和分類考古題，當然也可以檢舉有問題的考古題，會由管理員進行處理
+4. 進入上傳頁，填寫課程/教授/年份/類別/是否含解答等欄位，並上傳檔案
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 開發
 
-## Deploy on Vercel
+技術與框架：
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Framework：Next.js（App Router / Route Handlers / Server Actions）
+- Language：TypeScript
+- UI：React、Tailwind CSS（含 `lucide-react` icon）
+- Auth：NextAuth v4（Google OAuth；限制 `@g.ntu.edu.tw`）
+- Database：MongoDB + Mongoose
+- File Storage：Google Drive API（`googleapis`，以管理員 OAuth refresh token 上傳）
+- Deploy：Vercel
+- Lint：ESLint
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### localhost 安裝與測試之詳細步驟
+
+1. **安裝套件**
+    
+    ```bash
+    npm install
+    ```
+    
+2.  複製 `.env.example` 一份到 `.env.local` ，並填上對應的 keys。
+    - Google drive 相關的環境變數請參考 `docs/drive.md` 步驟設定
+    - monitor 相關環境變數可自訂，於後續登入時使用。
+
+3. **啟動開發伺服器**開啟 [http://localhost:3000](http://localhost:3000/)。
+    
+    ```bash
+    npm run dev
+    ```
+
+4. **測試**
+    - **測試流程（前台）**
+        - 以 `@g.ntu.edu.tw` 帳號登入。
+        - 瀏覽首頁 Trending、點擊考古題詳頁，嘗試閃電/收藏。
+        - 前往「搜尋」頁套用關鍵字、年份與篩選條件，檢查排序。
+        - 在「上傳」頁上傳題目/解答檔案，送出後檢查 Drive 有檔、DB 有新考古題，並在「我的頁面」確認「我的上傳」與「私人資料夾」。
+    - **測試流程（管理端）**
+        - 進入 `/monitor`，使用下方管理員帳密登入。
+            
+            ```bash
+            帳號：admin
+            密碼：wpfinaladminpasswd
+            ```
+            
+        - 檢視「檢舉」與「近期上傳」，嘗試編輯欄位、替換/新增/刪除檔案，確認頁面即時更新。
+
+## 分工
+
+- 顏佐霏：網頁 prototype、Google OAuth 串接、登入頁面和流程
+- 劉軒齊：進階搜尋功能、管理者頁面、檔案上傳、使用者體驗優化
+- 賴亮昕：MongoDB / Google drive 串接、上傳功能、收藏與 trending 功能
+
+## 心得
+- 賴亮昕：
+    這次做 WebFinal 最大的收穫，是把「做一個網站」的需求，拆成可以落地的幾條完整流程：身分驗證、資料建模、檔案儲存、搜尋體驗與部署、使用者回饋和優化，並且透過良好的分工確保多人合作可以順利進行。
+
+    這次專案裡我最想強調的是 Google Drive 串接的部分，因為剛好遇到 Google 政策調整，導致網路資源介紹的串接方法已經不可行，這迫使我大量查找最新的討論和文件，找出其他可行方案，並且考量安全性、使用場景、成本等因素，最後才整理出一套能穩定運作的流程。也因為這次踩過坑，我更理解第三方服務整合的風險：外部政策一變，工程上就必須快速找到替代方案並把流程文件化，才能讓專案在部署後依然可維護、可重現。
+
+- 顏佐霏：
+    我覺得在這次的 final project 中，我學到最重要的一件事就是：在多人專案中如何使用 GitHub 進行版本管理與同步。實作過程中，我逐漸了解要怎麼分配工作，才能把彼此之間的衝突降到最低，也學會透過 merge 來整合成最新、穩定的版本。
+
+    此外，我也學到如何透過 OAuth 來限制使用者以特定類型的 Gmail 帳號登入，並且在和組員、朋友的討論過程中，一起 brainstorm 出許多不同的功能想法，以及改善使用者體驗的方法。整體來說，這個 final project 不只讓我對前後端的串接流程有更完整的理解，也讓我在同儕合作與實際開發經驗上收穫良多。
+
+- 劉軒齊：
+    這個 project 讓我們實際把課堂上學到的很多工具，用在自己真的有興趣的題目上。以我負責的篩選介面為例，我在規劃的時候不只是想功能要能動、不要有 bug，而是會一直去想怎麼做使用者才會用得更順、更方便，像是篩選條件怎麼排列比較直覺、預設值要不要先幫使用者選好、排序切換要怎麼設計才不會讓人迷路，這些小細節都會影響整體體驗。
+
+    在團隊合作的時候也學習到怎麼用 git 協作專案，一開始我都不太會用，甚至把前一個組員的 commit 不小心覆蓋掉，但後面就越來越熟悉如何處理 conflict。整個做專案的過程中雖然踩了不少雷，但最後能把功能一個個穩定地接起來的時候成就感蠻大的。
+
+## 對於此課程的建議
+
+這堂課內容非常充實，從網頁服務的整體架構到各個實務細節都有完整的介紹。不只著重在理論說明，也透過大量實作讓我們實際體會網頁開發的流程與其中需要注意的各種細節，對於建立正確觀念與實務能力都很有幫助，是一門相當扎實、也很難得的課程。
+
+另外，我們也很感謝課程中提供了 Cursor 作為輔助工具。除了讓我們在完成作業時有更好的支援，也讓我們實際體會到所謂的 vibe coding 並不是單純依賴工具就能完成，而是需要更清楚地整理需求、不斷測試與修正，才能產出真正可用的成果。這樣的學習經驗對我們來說很有啟發，也希望未來課程中還能有類似的嘗試與機會。
