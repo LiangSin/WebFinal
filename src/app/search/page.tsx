@@ -33,6 +33,22 @@ interface SearchResult {
   createdAt?: string;
 }
 
+const SEARCH_STATE_KEY = "searchPageState";
+
+interface StoredSearchState {
+  keyword: string;
+  keywordType: KeywordType;
+  yearStart: string;
+  yearEnd: string;
+  yearType: YearType;
+  selectedExamTypes: string[];
+  selectedAnswerTypes: string[];
+  sortBy: SortOption;
+  results?: SearchResult[];
+  total?: number;
+  hasSearched?: boolean;
+}
+
 const examTypeOptions = ["期中考", "期末考", "小考"];
 const answerTypeOptions = ["沒有", "包含官方解", "包含非官方解"];
 
@@ -74,6 +90,7 @@ export default function SearchPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
 
   const searchPayload = useMemo<SearchPayload>(() => {
     const start = parseYearInput(yearStart);
@@ -105,10 +122,87 @@ export default function SearchPage() {
   ]);
 
   const payloadRef = useRef<SearchPayload>(searchPayload);
+  const formStateRef = useRef<StoredSearchState>({
+    keyword,
+    keywordType,
+    yearStart,
+    yearEnd,
+    yearType,
+    selectedExamTypes,
+    selectedAnswerTypes,
+    sortBy,
+  });
 
   useEffect(() => {
     payloadRef.current = searchPayload;
   }, [searchPayload]);
+
+  useEffect(() => {
+    formStateRef.current = {
+      keyword,
+      keywordType,
+      yearStart,
+      yearEnd,
+      yearType,
+      selectedExamTypes,
+      selectedAnswerTypes,
+      sortBy,
+    };
+  }, [
+    keyword,
+    keywordType,
+    yearStart,
+    yearEnd,
+    yearType,
+    selectedExamTypes,
+    selectedAnswerTypes,
+    sortBy,
+  ]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.sessionStorage.getItem(SEARCH_STATE_KEY);
+      if (!raw) {
+        setIsRestored(true);
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as StoredSearchState;
+
+      if (typeof parsed.keyword === "string") setKeyword(parsed.keyword);
+      if (parsed.keywordType === "professor" || parsed.keywordType === "course") {
+        setKeywordType(parsed.keywordType);
+      }
+      if (typeof parsed.yearStart === "string") setYearStart(parsed.yearStart);
+      if (typeof parsed.yearEnd === "string") setYearEnd(parsed.yearEnd);
+      if (parsed.yearType === "AD" || parsed.yearType === "ROC") {
+        setYearType(parsed.yearType);
+      }
+      if (Array.isArray(parsed.selectedExamTypes)) {
+        setSelectedExamTypes(parsed.selectedExamTypes);
+      }
+      if (Array.isArray(parsed.selectedAnswerTypes)) {
+        setSelectedAnswerTypes(parsed.selectedAnswerTypes);
+      }
+      if (parsed.sortBy === "createdAt" || parsed.sortBy === "lightning") {
+        setSortBy(parsed.sortBy);
+      }
+      if (Array.isArray(parsed.results)) {
+        setResults(parsed.results);
+      }
+      if (typeof parsed.total === "number") {
+        setTotal(parsed.total);
+      }
+      if (parsed.hasSearched) {
+        setHasSearched(true);
+      }
+    } catch (restoreError) {
+      console.error("Failed to restore search state:", restoreError);
+    } finally {
+      setIsRestored(true);
+    }
+  }, []);
 
   const getYearValidationError = () => {
     const startTrim = yearStart.trim();
@@ -146,46 +240,72 @@ export default function SearchPage() {
 
   const yearErrorMessage = useMemo(() => getYearValidationError(), [yearStart, yearEnd]);
 
-  const performSearch = useCallback(async (payload: SearchPayload) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/exams/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      const data = (await response.json()) as {
-        exams: SearchResult[];
+  const persistSearchState = useCallback(
+    (payload: SearchPayload, exams: SearchResult[], totalCount: number) => {
+      if (typeof window === "undefined") return;
+      const formState = formStateRef.current;
+      const stateToStore: StoredSearchState & {
+        results: SearchResult[];
         total: number;
+        hasSearched: boolean;
+        payload: SearchPayload;
+      } = {
+        ...formState,
+        results: exams,
+        total: totalCount,
+        hasSearched: true,
+        payload,
       };
+      window.sessionStorage.setItem(SEARCH_STATE_KEY, JSON.stringify(stateToStore));
+    },
+    []
+  );
 
-      setResults(data.exams);
-      setTotal(data.total);
-      setHasSearched(true);
-    } catch (err) {
-      console.error("Failed to search exams:", err);
-      setError("搜尋發生錯誤，請稍後再試。");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const performSearch = useCallback(
+    async (payload: SearchPayload) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("/api/exams/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = (await response.json()) as {
+          exams: SearchResult[];
+          total: number;
+        };
+
+        setResults(data.exams);
+        setTotal(data.total);
+        setHasSearched(true);
+        persistSearchState(payload, data.exams, data.total);
+      } catch (err) {
+        console.error("Failed to search exams:", err);
+        setError("搜尋發生錯誤，請稍後再試。");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [persistSearchState]
+  );
 
   useEffect(() => {
+    if (!isRestored) return;
     const yearError = getYearValidationError();
     if (yearError) {
       // setError(yearError);
       return;
     }
     void performSearch(payloadRef.current);
-  }, [performSearch]);
+  }, [performSearch, isRestored]);
 
   const handleSearch = useCallback(async () => {
     if (yearErrorMessage) {

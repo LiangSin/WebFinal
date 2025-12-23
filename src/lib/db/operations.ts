@@ -122,7 +122,7 @@ export async function searchExams({
     if (keywordType === "professor") {
       filter.instructor = regex;
     } else {
-      filter.courseName = regex;
+      filter.$or = [{ courseName: regex }, { title: regex }];
     }
   }
 
