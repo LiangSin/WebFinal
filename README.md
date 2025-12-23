@@ -3,9 +3,10 @@ Group 29 賴亮昕、顏佐霏、劉軒齊
 
 ## 重要連結
 
-Demo 影片連結: <TODO>
+Demo 影片連結: https://drive.google.com/file/d/1K9bqQeiYGJRZ3PLKMyTTAGX8e27XlART/view?usp=drivesdk
 
 Deployment link: https://web-final-lemon.vercel.app/
+
 Monitor link: https://web-final-lemon.vercel.app/monitor
 
 Github link: https://github.com/LiangSin/WebFinal
@@ -64,13 +65,7 @@ Github link: https://github.com/LiangSin/WebFinal
         - 前往「搜尋」頁套用關鍵字、年份與篩選條件，檢查排序。
         - 在「上傳」頁上傳題目/解答檔案，送出後檢查 Drive 有檔、DB 有新考古題，並在「我的頁面」確認「我的上傳」與「私人資料夾」。
     - **測試流程（管理端）**
-        - 進入 `/monitor`，使用下方管理員帳密登入。
-            
-            ```bash
-            帳號：admin
-            密碼：wpfinaladminpasswd
-            ```
-            
+        - 進入 `/monitor`，使用環境變數中設定的管理員帳密登入。
         - 檢視「檢舉」與「近期上傳」，嘗試編輯欄位、替換/新增/刪除檔案，確認頁面即時更新。
 
 ## 分工
